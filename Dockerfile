@@ -27,8 +27,7 @@ WORKDIR /srv
 # Install user app:
 RUN git clone https://github.com/vykozlov/dogs_breed_det && \
     cd  dogs_breed_det && \
-    #pip install -e . && \
-    pip install -r requirements.txt && \
+    pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/* && \
     cd ..
@@ -36,15 +35,14 @@ RUN git clone https://github.com/vykozlov/dogs_breed_det && \
 # Install DEEPaaS:
 RUN git clone https://github.com/indigo-dc/deepaas && \
     cd deepaas && \
-    # use older commit
-    #-git checkout 9d4c1c4a962be567b17f161ef97892ecdf6cf704 && \
     pip install -U . && \
     cd ..
 
-ENV Resnet50Data DogResnet50Data.npz
-ENV S3STORAGE https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/
-RUN curl -o ./dogs_breed_det/models/bottleneck_features/${Resnet50Data} \
-    ${S3STORAGE}${Resnet50Data}
+# Your code may download data automatically or you force the download during docker build
+#ENV Resnet50Data DogResnet50Data.npz
+#ENV S3STORAGE https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/
+#RUN curl -o ./dogs_breed_det/models/bottleneck_features/${Resnet50Data} \
+#    ${S3STORAGE}${Resnet50Data}
 
 EXPOSE 5000
 
