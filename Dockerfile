@@ -35,10 +35,14 @@ RUN git clone https://github.com/vykozlov/dogs_breed_det && \
 # Install DEEPaaS:
 RUN git clone https://github.com/indigo-dc/deepaas && \
     cd deepaas && \
-    pip install -U . && \
+    pip install --no-cache-dir -U . && \
+    rm -rf /root/.cache/pip/* && \
+    rm -rf /tmp/* && \
     cd ..
 
-# Your code may download data automatically or you force the download during docker build
+#####
+# Your code may download data automatically or 
+# you force the download during docker build, as below
 #ENV Resnet50Data DogResnet50Data.npz
 #ENV S3STORAGE https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/
 #RUN curl -o ./dogs_breed_det/models/bottleneck_features/${Resnet50Data} \
