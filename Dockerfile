@@ -21,7 +21,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm -rf /tmp/*
 
 
-# Set the working directory
+# Set the working directory. Don't change this.
 WORKDIR /srv
 
 # Install user app:
