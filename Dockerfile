@@ -1,9 +1,9 @@
 # Base image, e.g. tensorflow/tensorflow:1.7.0
-FROM tensorflow/tensorflow:1.8.0
+FROM tensorflow/tensorflow:1.8.0-gpu
 
-LABEL maintainer='Valentin Kozlov'
+LABEL maintainer='V.Kozlov (KIT)'
 LABEL version='0.3.0'
-# Dogs breed detector
+# Dogs breed detector as example for DEEPaaS API
 
 
 # Install ubuntu updates and python related stuff
@@ -21,7 +21,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm -rf /tmp/*
 
 
-# Set the working directory. Don't change this.
+# Set LANG environment
+ENV LANG C.UTF-8
+
+# Set the working directory
 WORKDIR /srv
 
 # Install user app:
@@ -41,13 +44,15 @@ RUN git clone https://github.com/indigo-dc/deepaas && \
     cd ..
 
 #####
-# Your code may download data automatically or 
-# you force the download during docker build, as below
+# Your code may download necessary data automatically or 
+# you force the download during docker build. Example below is for latter case:
 #ENV Resnet50Data DogResnet50Data.npz
 #ENV S3STORAGE https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/
 #RUN curl -o ./dogs_breed_det/models/bottleneck_features/${Resnet50Data} \
 #    ${S3STORAGE}${Resnet50Data}
 
+
+# Open DEEPaaS port
 EXPOSE 5000
 
 CMD deepaas-run
