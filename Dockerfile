@@ -1,5 +1,5 @@
 # Base image, e.g. tensorflow/tensorflow:1.7.0
-FROM tensorflow/tensorflow:1.8.0
+FROM tensorflow/tensorflow:1.8.0-gpu
 
 LABEL maintainer='V.Kozlov (KIT)'
 LABEL version='0.3.0'
