@@ -1,5 +1,5 @@
 # Base image, e.g. tensorflow/tensorflow:1.7.0
-FROM tensorflow/tensorflow:1.8.0-gpu
+FROM tensorflow/tensorflow:1.8.0
 
 LABEL maintainer='V.Kozlov (KIT)'
 LABEL version='0.3.0'
@@ -20,6 +20,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
+
+# install rclone
+RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
+    dpkg -i rclone-current-linux-amd64.deb && \
+    apt install -f && \
+    rm rclone-current-linux-amd64.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /root/.cache/pip/* && \
+    rm -rf /tmp/*
 
 # Set LANG environment
 ENV LANG C.UTF-8
