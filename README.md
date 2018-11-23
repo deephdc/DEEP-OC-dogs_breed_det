@@ -6,8 +6,6 @@ DEEP-OC-dogs_breed_det
 This is a container that will simply run the DEEP as a Service API component,
 with a toy example to identify Dog's breed, "Dogs breed detector" (src: [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det)).
 
-Quick instructions.
-===================
     
 # Running the container
 
