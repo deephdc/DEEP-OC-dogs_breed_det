@@ -38,7 +38,7 @@ ENV LANG C.UTF-8
 WORKDIR /srv
 
 # Install user app:
-RUN git clone https://github.com/vykozlov/dogs_breed_det && \
+RUN git clone https://github.com/indigo-dc/dogs_breed_det && \
     cd  dogs_breed_det && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
