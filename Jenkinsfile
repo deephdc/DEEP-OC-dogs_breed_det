@@ -8,7 +8,7 @@ pipeline {
     }
 
     environment {
-        dockerhub_repo = "deephdc/DEEP-OC-dogs_breed_det"
+        dockerhub_repo = "deephdc/deep-oc-dogs_breed_det"
     }
 
     stages {

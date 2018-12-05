@@ -41,13 +41,7 @@ Building the container:
     $ docker build -t deephdc/deep-oc-dogs_breed_det .
     ```
 
-3. Run the container:
-
-    ```bash
-    $ docker run -ti -p 5000:5000 deephdc/deep-oc-dogs_breed_det deepaas-run --listen-ip=0.0.0.0
-    ```
-
-These three steps will download the repository from GitHub and will build the
+These thow steps will download the repository from GitHub and will build the
 Docker container locally on your machine. You can inspect and modify the
 `Dockerfile` in order to check what is going on. For instance, you can pass the
 `--debug=True` flag to the `deepaas-run` command, in order to enable the debug
@@ -57,5 +51,29 @@ mode.
 
 Once the container is up and running, browse to `http://localhost:5000` to get
 the [OpenAPI (Swagger)](https://www.openapis.org/) documentation page.
+
+
+## Expected data location
+
+The [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det) application expects 
+data for training, validation, and test located in the following directories _inside the container_:
+/srv/dogs_breed_det/data/dogImages/train
+/srv/dogs_breed_det/data/dogImages/valid
+/srv/dogs_breed_det/data/dogImages/test
+
+Original dataset with dog images for training can be found at [udacity-aind/dogImages.zip](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip)
+
+Trained model is stored inside the container in
+/srv/dogs_breed_det/models
+
+## Running the container
+In the following example we suppose that dog images are located in $HOME/dogImages directory at your host machine. Then to run the Docker container for training execute:
+
+    ```bash
+    $ docker run -ti -p 5000:5000 -v $HOME/dogImages:/srv/dogs_breed_det/data/dogImages deephdc/deep-oc-dogs_breed_det deepaas-run --listen-ip=0.0.0.0
+    ```
+
+Once the model is trained, you can use it for classifying dog's breeds.
+
 
 
