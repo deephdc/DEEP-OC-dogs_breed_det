@@ -41,7 +41,7 @@ Building the container:
     $ docker build -t deephdc/deep-oc-dogs_breed_det .
     ```
 
-These thow steps will download the repository from GitHub and will build the
+These two steps will download the repository from GitHub and will build the
 Docker container locally on your machine. You can inspect and modify the
 `Dockerfile` in order to check what is going on. For instance, you can pass the
 `--debug=True` flag to the `deepaas-run` command, in order to enable the debug
@@ -69,9 +69,9 @@ Trained model is stored inside the container in
 ## Running the container
 In the following example we suppose that dog images are located in $HOME/dogImages directory at your host machine. Then to run the Docker container for training execute:
 
-    ```bash
-    $ docker run -ti -p 5000:5000 -v $HOME/dogImages:/srv/dogs_breed_det/data/dogImages deephdc/deep-oc-dogs_breed_det deepaas-run --listen-ip=0.0.0.0
-    ```
+```bash
+$ docker run -ti -p 5000:5000 -v $HOME/dogImages:/srv/dogs_breed_det/data/dogImages deephdc/deep-oc-dogs_breed_det deepaas-run --listen-ip=0.0.0.0
+```
 
 Once the model is trained, you can use it for classifying dog's breeds.
 
