@@ -3,10 +3,12 @@ DEEP-OC-dogs_breed_det
 
 ![DEEP-Hybrid-DataCloud logo](https://deep-hybrid-datacloud.eu/wp-content/uploads/2018/01/logo.png)
 
+[![Build Status](https://jenkins.indigo-datacloud.eu:8080/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/DEEP-OC-dogs_breed_det/master)](https://jenkins.indigo-datacloud.eu:8080/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master)
+
 This is a container that will simply run the DEEP as a Service API component,
 with a toy example to identify Dog's breed, "Dogs breed detector" (src: [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det)).
 
-    
+
 # Running the container
 
 ## Directly from Docker Hub
@@ -55,7 +57,7 @@ the [OpenAPI (Swagger)](https://www.openapis.org/) documentation page.
 
 ## Expected data location
 
-The [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det) application expects 
+The [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det) application expects
 data for training, validation, and test located in the following directories _inside the container_:
 /srv/dogs_breed_det/data/dogImages/train
 /srv/dogs_breed_det/data/dogImages/valid
