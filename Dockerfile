@@ -21,21 +21,24 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm -rf /tmp/*
 
 
+# Set LANG environment
+ENV LANG C.UTF-8
+
+# Set the working directory
+WORKDIR /srv
+
 # install rclone
 RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
     dpkg -i rclone-current-linux-amd64.deb && \
     apt install -f && \
+    touch /srv/.rclone.conf && \
     rm rclone-current-linux-amd64.deb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
-# Set LANG environment
-ENV LANG C.UTF-8
 
-# Set the working directory
-WORKDIR /srv
 
 # Install user app:
 RUN git clone https://github.com/indigo-dc/dogs_breed_det && \
