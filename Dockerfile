@@ -49,7 +49,7 @@ RUN git clone https://github.com/indigo-dc/dogs_breed_det && \
     cd ..
 
 # Install DEEPaaS:
-RUN git clone https://github.com/indigo-dc/deepaas && \
+RUN git clone -b '0.1.2' https://github.com/indigo-dc/deepaas && \
     cd deepaas && \
     pip install --no-cache-dir -U . && \
     rm -rf /root/.cache/pip/* && \
