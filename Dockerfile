@@ -1,5 +1,5 @@
 # Base image, e.g. tensorflow/tensorflow:1.7.0
-FROM tensorflow/tensorflow:1.8.0-gpu
+FROM tensorflow/tensorflow:1.8.0
 
 LABEL maintainer='V.Kozlov (KIT)'
 LABEL version='0.3.0'
@@ -49,7 +49,8 @@ RUN git clone https://github.com/indigo-dc/dogs_breed_det && \
     cd ..
 
 # Install DEEPaaS:
-RUN git clone https://github.com/indigo-dc/deepaas && \
+RUN git clone -b '0.1.2' https://github.com/indigo-dc/deepaas && \
+#RUN git clone https://github.com/indigo-dc/deepaas && \
     cd deepaas && \
     pip install --no-cache-dir -U . && \
     rm -rf /root/.cache/pip/* && \
