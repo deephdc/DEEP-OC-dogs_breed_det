@@ -2,7 +2,6 @@
 FROM tensorflow/tensorflow:1.8.0-gpu
 
 LABEL maintainer='V.Kozlov (KIT)'
-LABEL version='0.3.0'
 # Dogs breed detector as example for DEEPaaS API
 
 
@@ -38,23 +37,24 @@ RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
+# Install FLAT (FLask support for handling Access Tokens)
+RUN cd /srv && git clone https://github.com/marcvs/flat.git && \
+    rm -rf /tmp/* 
 
+ENV PYTHONPATH /srv/flat
 
 # Install user app:
-RUN git clone https://github.com/indigo-dc/dogs_breed_det && \
+RUN git clone https://github.com/deephdc/dogs_breed_det && \
     cd  dogs_breed_det && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/* && \
     cd ..
 
-# Install DEEPaaS:
-RUN git clone -b '0.1.2' https://github.com/indigo-dc/deepaas && \
-    cd deepaas && \
-    pip install --no-cache-dir -U . && \
+# Install DEEPaaS from PyPi:
+RUN pip install --no-cache-dir deepaas && \
     rm -rf /root/.cache/pip/* && \
-    rm -rf /tmp/* && \
-    cd ..
+    rm -rf /tmp/*
 
 #####
 # Your code may download necessary data automatically or 

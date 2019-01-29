@@ -13,12 +13,12 @@ pipeline {
 
     stages {
         stage('DockerHub delivery') {
-            when {
-                anyOf {
-                    branch 'master'
-                    buildingTag()
-                }
-            }
+            //when {
+            //    anyOf {
+            //       branch 'master'
+            //       buildingTag()
+            //   }
+            //}
             steps{
                 checkout scm
                 script {
