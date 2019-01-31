@@ -1,32 +1,32 @@
-cpu:
+dogs-cpu:
   image: deephdc/deep-oc-dogs_breed_det:cpu
   ports:
     - 5000:5000
-  entrypoint: deepaas-run --listen-ip=0.0.0.0
+  entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
 
-gpu:
+dogs-gpu:
   image: deephdc/deep-oc-dogs_breed_det
   ports:
     - 5000:5000
-  entrypoint: deepaas-run --listen-ip=0.0.0.0
+  entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
 
-cpu-local:
+dogs-cpu-local:
   extends:
-    service: cpu
+    service: dogs-cpu
   volumes:
     - $HOME/datasets/dogs_breed/data:/srv/dogs_breed_det/data
     - $HOME/datasets/dogs_breed/models:/srv/dogs_breed_det/models
 
-gpu-local:
+dogs-gpu-local:
   extends:
-    service: gpu
+    service: dogs-gpu
   volumes:
     - $HOME/datasets/dogs_breed/data:/srv/dogs_breed_det/data
     - $HOME/datasets/dogs_breed/models:/srv/dogs_breed_det/models
 
-cpu-rclone:
+dogs-cpu-rclone:
   extends:
-    service: cpu
+    service: dogs-cpu
   volumes:
     - $HOME/.config/rclone:/srv/rclone
   environment:
