@@ -1,7 +1,7 @@
 DEEP-OC-dogs_breed_det
 ============================================
 
-![DEEP-Hybrid-DataCloud logo](https://marketplace.deep-hybrid-datacloud.eu/images/logo-deep.png)
+![DEEP-Hybrid-DataCloud logo](https://docs.deep-hybrid-datacloud.eu/en/latest/_static/logo.png)
 
 [![Build Status](https://jenkins.indigo-datacloud.eu:8080/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/DEEP-OC-dogs_breed_det/master)](https://jenkins.indigo-datacloud.eu:8080/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master)
 
@@ -59,9 +59,9 @@ the [OpenAPI (Swagger)](https://www.openapis.org/) documentation page.
 
 The [deephdc/dogs_breed_det](https://github.com/deephdc/dogs_breed_det) application expects
 data for training, validation, and test located in the following directories _inside the container_:
-/srv/dogs_breed_det/data/dogImages/train
-/srv/dogs_breed_det/data/dogImages/valid
-/srv/dogs_breed_det/data/dogImages/test
+*  /srv/dogs_breed_det/data/dogImages/train
+*  /srv/dogs_breed_det/data/dogImages/valid
+*  /srv/dogs_breed_det/data/dogImages/test
 
 Original dataset with dog images for training can be found at [udacity-aind/dogImages.zip](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip)
 
@@ -81,7 +81,8 @@ Once the model is trained, you can use it for classifying dog's breeds.
 
 docker-compose.yml allows you to run the application with various configurations via docker-compose.
 
-N.B! docker-compose.yml is of version '2.3', one needs docker 17.06.0+ and docker-compose ver.1.16.0+, see https://docs.docker.com/compose/install/
+**N.B!** docker-compose.yml is of version '2.3', one needs docker 17.06.0+ and docker-compose ver.1.16.0+, see https://docs.docker.com/compose/install/
+
 If you want to use Nvidia GPU (dogs-gpu), you need nvidia-docker and docker-compose ver1.19.0+ , see [nvidia/FAQ](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#do-you-support-docker-compose)
 
 
