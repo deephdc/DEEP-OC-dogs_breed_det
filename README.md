@@ -1,12 +1,12 @@
 DEEP-OC-dogs_breed_det
 ============================================
 
-![DEEP-Hybrid-DataCloud logo](https://deep-hybrid-datacloud.eu/wp-content/uploads/sites/2/2018/01/logo.png)
+![DEEP-Hybrid-DataCloud logo](https://marketplace.deep-hybrid-datacloud.eu/images/logo-deep.png)
 
 [![Build Status](https://jenkins.indigo-datacloud.eu:8080/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/DEEP-OC-dogs_breed_det/master)](https://jenkins.indigo-datacloud.eu:8080/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master)
 
 This is a container that will simply run the DEEP as a Service API component,
-with a toy example to identify Dog's breed, "Dogs breed detector" (src: [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det)).
+with a toy example to identify Dog's breed, "Dogs breed detector" (src: [deephdc/dogs_breed_det](https://github.com/deephdc/dogs_breed_det)).
 
 
 # Running the container
@@ -17,7 +17,7 @@ To run the Docker container directly from Docker Hub and start using the API
 simply run the following command:
 
 ```bash
-$ docker run -ti -p 5000:5000 deephdc/deep-oc-dogs_breed_det deepaas-run --listen-ip=0.0.0.0
+$ docker run -ti -p 5000:5000 deephdc/deep-oc-dogs_breed_det
 ```
 
 This command will pull the Docker container from the Docker Hub
@@ -57,7 +57,7 @@ the [OpenAPI (Swagger)](https://www.openapis.org/) documentation page.
 
 ## Expected data location
 
-The [indigo-dc/dogs_breed_det](https://github.com/indigo-dc/dogs_breed_det) application expects
+The [deephdc/dogs_breed_det](https://github.com/deephdc/dogs_breed_det) application expects
 data for training, validation, and test located in the following directories _inside the container_:
 /srv/dogs_breed_det/data/dogImages/train
 /srv/dogs_breed_det/data/dogImages/valid
@@ -76,6 +76,11 @@ $ docker run -ti -p 5000:5000 -v $HOME/dogImages:/srv/dogs_breed_det/data/dogIma
 ```
 
 Once the model is trained, you can use it for classifying dog's breeds.
+
+## docker-compose
+
+docker-compose.yml gives your a possibility to run the application with various configurations via docker-compose.
+
 
 
 
