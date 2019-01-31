@@ -79,7 +79,10 @@ Once the model is trained, you can use it for classifying dog's breeds.
 
 ## docker-compose
 
-docker-compose.yml gives your a possibility to run the application with various configurations via docker-compose.
+docker-compose.yml allows you to run the application with various configurations via docker-compose.
+
+N.B! docker-compose.yml is of version '2.3', one needs docker 17.06.0+ and docker-compose ver.1.16.0+, see https://docs.docker.com/compose/install/
+If you want to use Nvidia GPU (dogs-gpu), you need nvidia-docker and docker-compose ver1.19.0+ , see [nvidia/FAQ](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#do-you-support-docker-compose)
 
 
 

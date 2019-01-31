@@ -1,34 +1,41 @@
-dogs-cpu:
-  image: deephdc/deep-oc-dogs_breed_det:cpu
-  ports:
-    - 5000:5000
-  entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
+version: '2.3'
 
-dogs-gpu:
-  image: deephdc/deep-oc-dogs_breed_det
-  ports:
-    - 5000:5000
-  entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
+services:
+    dogs-cpu:
+      image: deephdc/deep-oc-dogs_breed_det:cpu
+      #if 'docker-compose run' is used
+      # do not forget '--service-ports'!
+      ports:
+        - 5000:5000
+      entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
 
-dogs-cpu-local:
-  extends:
-    service: dogs-cpu
-  volumes:
-    - $HOME/datasets/dogs_breed/data:/srv/dogs_breed_det/data
-    - $HOME/datasets/dogs_breed/models:/srv/dogs_breed_det/models
+    dogs-gpu:
+      image: deephdc/deep-oc-dogs_breed_det
+      runtime: nvidia
+      ports:
+        - 5000:5000
+      entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
 
-dogs-gpu-local:
-  extends:
-    service: dogs-gpu
-  volumes:
-    - $HOME/datasets/dogs_breed/data:/srv/dogs_breed_det/data
-    - $HOME/datasets/dogs_breed/models:/srv/dogs_breed_det/models
 
-dogs-cpu-rclone:
-  extends:
-    service: dogs-cpu
-  volumes:
-    - $HOME/.config/rclone:/srv/rclone
-  environment:
-    - RCLONE_CONFIG=/srv/rclone/rclone.conf
+    dogs-cpu-local:
+      extends:
+        service: dogs-cpu
+      volumes:
+        - $HOME/datasets/dogs_breed/data:/srv/dogs_breed_det/data
+        - $HOME/datasets/dogs_breed/models:/srv/dogs_breed_det/models
+
+    dogs-gpu-local:
+      extends:
+         service: dogs-gpu
+      volumes:
+        - $HOME/datasets/dogs_breed/data:/srv/dogs_breed_det/data
+        - $HOME/datasets/dogs_breed/models:/srv/dogs_breed_det/models
+
+    dogs-cpu-rclone:
+      extends:
+        service: dogs-cpu
+      volumes:
+        - $HOME/.config/rclone:/srv/rclone
+      environment:
+        - RCLONE_CONFIG=/srv/rclone/rclone.conf
 
