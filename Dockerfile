@@ -1,24 +1,41 @@
+# Dockerfile has two Arguments: tag and pyVer
+# tag - tag for Tensorflow Image (default: 1.10-gpu-py3)
+# pyVer - python versions as 'python' or 'python3' (default: python3)
+
+# it is still python2 code...
+ARG tag=1.10.0
+
 # Base image, e.g. tensorflow/tensorflow:1.7.0
-FROM tensorflow/tensorflow:1.8.0-gpu
+FROM tensorflow/tensorflow:${tag}
 
 LABEL maintainer='V.Kozlov (KIT)'
 # Dogs breed detector as example for DEEPaaS API
 
+# it is still python2 code...
+ARG pyVer=python
 
 # Install ubuntu updates and python related stuff
+# link python3 to python, pip3 to pip, if needed
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y --no-install-recommends \
          git \
          curl \
          wget \
-         python-setuptools \
-         python-pip \
-         python-wheel && \ 
+         $pyVer-setuptools \
+         $pyVer-pip \
+         $pyVer-wheel && \ 
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /root/.cache/pip/* && \
-    rm -rf /tmp/*
-
+    rm -rf /tmp/* && \
+    if [ "$pyVer" = "python3" ] ; then \
+       ln -s /usr/bin/pip3 /usr/bin/pip && \
+       if [ ! -e /usr/bin/python ]; then \
+          ln -s /usr/bin/python3 /usr/bin/python; \
+       fi; \
+    fi && \
+    python --version && \
+    pip --version
 
 # Set LANG environment
 ENV LANG C.UTF-8
@@ -30,15 +47,17 @@ WORKDIR /srv
 RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
     dpkg -i rclone-current-linux-amd64.deb && \
     apt install -f && \
-    touch /srv/.rclone.conf && \
+    mkdir /srv/.rclone/ && touch /srv/.rclone/rclone.conf && \
     rm rclone-current-linux-amd64.deb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
-# Install FLAT (FLAsk support for handling Access Tokens)
-RUN pip install --no-cache-dir flaat && \
+# Install DEEPaaS from PyPi
+# Install FLAAT (FLAsk support for handling Access Tokens)
+RUN pip install --no-cache-dir \
+    deepaas \
+    flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
@@ -53,10 +72,6 @@ RUN git clone https://github.com/deephdc/dogs_breed_det && \
     rm -rf /tmp/* && \
     cd ..
 
-# Install DEEPaaS from PyPi:
-RUN pip install --no-cache-dir deepaas && \
-    rm -rf /root/.cache/pip/* && \
-    rm -rf /tmp/*
 
 #####
 # Your code may download necessary data automatically or 
