@@ -28,7 +28,7 @@ pipeline {
                     //image_id = DockerBuild(dockerhub_repo, env.BRANCH_NAME)
 
                     // CPU + python2 (aka default now)
-                    sh "docker build --no-cache --force-rm -t ${id} -t {id}:py2 \
+                    sh "docker build --no-cache --force-rm -t ${id} -t ${id}:py2 \
                         --build-arg tag=${env.tf_ver} \
                         --build-arg pyVer=python ."
 
