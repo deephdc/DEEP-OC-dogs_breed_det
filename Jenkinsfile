@@ -33,7 +33,7 @@ pipeline {
                         --build-arg pyVer=python ."
 
                     // GPU + python2
-                    sh "docker build --no-cache --force-rm -t ${id}:tf-gpu-py2 \
+                    sh "docker build --no-cache --force-rm -t ${id}:gpu-py2 \
                         --build-arg tag=${env.tf_ver}-gpu \
                         --build-arg pyVer=python ."
                 }
