@@ -1,6 +1,6 @@
 #!/usr/bin/groovy
 
-@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.2.0']) _
+@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.2.1']) _
 
 pipeline {
     agent {
@@ -34,7 +34,7 @@ pipeline {
 
                     // GPU + python2
                     DockerBuild(id,
-                                tag: ['gpu-py2'], 
+                                tag: 'gpu-py2', 
                                 build_args: ["tag=${env.tf_ver}-gpu",
                                              "pyVer=python"])
                 }
