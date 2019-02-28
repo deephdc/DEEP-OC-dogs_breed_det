@@ -27,14 +27,14 @@ pipeline {
                     id = "${env.dockerhub_repo}"
 
                     // CPU + python2 (aka default now)
-                    DockerBuild(id,
-                                tag: ['latest', 'cpu'], 
-                                build_args: ["tag=${env.tf_ver}",
-                                             "pyVer=python"])
+                    //DockerBuild(id,
+                    //            tag: ['latest', 'cpu'], 
+                    //            build_args: ["tag=${env.tf_ver}",
+                    //                         "pyVer=python"])
 
                     // GPU + python2
                     DockerBuild(id,
-                                tag: ['gpu','gpu-py2'], 
+                                tag: ['gpu'], 
                                 build_args: ["tag=${env.tf_ver}-gpu",
                                              "pyVer=python"])
                 }
