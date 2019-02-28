@@ -1,6 +1,6 @@
 #!/usr/bin/groovy
 
-@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.2.1']) _
+@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.0.1']) _
 
 pipeline {
     agent {
@@ -27,10 +27,10 @@ pipeline {
                     id = "${env.dockerhub_repo}"
 
                     // CPU + python2 (aka default now)
-                    //DockerBuild(id,
-                    //            tag: ['latest', 'cpu'], 
-                    //            build_args: ["tag=${env.tf_ver}",
-                    //                         "pyVer=python"])
+                    DockerBuild(id,
+                                tag: ['latest', 'cpu'], 
+                                build_args: ["tag=${env.tf_ver}",
+                                             "pyVer=python"])
 
                     // GPU + python2
                     DockerBuild(id,
