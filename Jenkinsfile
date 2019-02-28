@@ -1,6 +1,6 @@
 #!/usr/bin/groovy
 
-@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.1.0']) _
+@Library(['github.com/indigo-dc/jenkins-pipeline-library@1.2.1']) _
 
 pipeline {
     agent {
@@ -27,16 +27,23 @@ pipeline {
                     id = "${env.dockerhub_repo}"
 
                     // CPU + python2 (aka default now)
-                    DockerBuild(id,
-                                tag: ['latest', 'cpu'], 
-                                build_args: ["tag=${env.tf_ver}",
-                                             "pyVer=python"])
+                    //DockerBuild(id,
+                    //            tag: ['latest', 'cpu'], 
+                    //            build_args: ["tag=${env.tf_ver}",
+                    //                         "pyVer=python"])
+                    sh "docker build --no-cache --force-rm -t ${id} -t ${id}:cpu \
+                        --build-arg tag=${env.tf_ver} \
+                        --build-arg pyVer=python ."
 
                     // GPU + python2
-                    DockerBuild(id,
-                                tag: ['gpu'], 
-                                build_args: ["tag=${env.tf_ver}-gpu",
-                                             "pyVer=python"])
+                    //DockerBuild(id,
+                    //            tag: ['gpu'], 
+                    //            build_args: ["tag=${env.tf_ver}-gpu",
+                    //                         "pyVer=python"])
+                    sh "docker build --no-cache --force-rm -t ${id}:gpu \
+                        --build-arg tag=${env.tf_ver}-gpu \
+                        --build-arg pyVer=python ."
+
                 }
             }
             post {
