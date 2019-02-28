@@ -1,16 +1,16 @@
 version: '2.3'
 
+#if 'docker-compose run' is used
+# do not forget '--service-ports'!
 services:
     dogs-cpu:
       image: deephdc/deep-oc-dogs_breed_det:cpu
-      #if 'docker-compose run' is used
-      # do not forget '--service-ports'!
       ports:
         - 5000:5000
       entrypoint: ["deepaas-run", "--listen-ip=0.0.0.0"]
 
     dogs-gpu:
-      image: deephdc/deep-oc-dogs_breed_det
+      image: deephdc/deep-oc-dogs_breed_det:gpu
       runtime: nvidia
       ports:
         - 5000:5000
@@ -35,7 +35,7 @@ services:
       extends:
         service: dogs-cpu
       volumes:
-        - $HOME/.config/rclone:/srv/rclone
+        - $HOME/.config/rclone:/srv/.rclone
       environment:
-        - RCLONE_CONFIG=/srv/rclone/rclone.conf
+        - RCLONE_CONFIG=/srv/.rclone/rclone.conf
 
