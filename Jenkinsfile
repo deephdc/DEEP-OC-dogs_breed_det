@@ -29,34 +29,34 @@ pipeline {
 
                     if (env.BRANCH_NAME == 'master') {
                        // CPU + python2 (aka default now)
-                       DockerBuild(id,
-                                   tag: ['latest', 'cpu'], 
-                                   build_args: ["tag=${env.tf_ver}",
-                                                "pyVer=python",
-                                                "branch=master"])
+                       id_cpu = DockerBuild(id,
+                                            tag: ['latest', 'cpu'], 
+                                            build_args: ["tag=${env.tf_ver}",
+                                                         "pyVer=python",
+                                                         "branch=master"])
 
                        // GPU + python2
-                       DockerBuild(id,
-                                   tag: ['gpu'], 
-                                   build_args: ["tag=${env.tf_ver}-gpu",
-                                                "pyVer=python",
-                                                "branch=master"])
+                       id_gpu = DockerBuild(id,
+                                            tag: ['gpu'], 
+                                            build_args: ["tag=${env.tf_ver}-gpu",
+                                                         "pyVer=python",
+                                                         "branch=master"])
                     }
 
                     if (env.BRANCH_NAME == 'test') {
                        // CPU + python2 (aka default now)
-                       DockerBuild(id,
-                                   tag: ['test', 'cpu-test'], 
-                                   build_args: ["tag=${env.tf_ver}",
-                                                "pyVer=python",
-                                                "branch=test"])
+                       id_cpu = DockerBuild(id,
+                                            tag: ['test', 'cpu-test'], 
+                                            build_args: ["tag=${env.tf_ver}",
+                                                         "pyVer=python",
+                                                         "branch=test"])
 
                        // GPU + python2
-                       DockerBuild(id,
-                                   tag: ['gpu-test'], 
-                                   build_args: ["tag=${env.tf_ver}-gpu",
-                                                "pyVer=python",
-                                                "branch=test"])
+                       id_gpu = DockerBuild(id,
+                                            tag: ['gpu-test'], 
+                                            build_args: ["tag=${env.tf_ver}-gpu",
+                                                         "pyVer=python",
+                                                         "branch=test"])
                     }
 
                 }
@@ -80,7 +80,8 @@ pipeline {
             }
             steps{
                 script {
-                    DockerPush(dockerhub_repo) // should push all tags
+                    DockerPush(id_cpu)
+                    DockerPush(id_gpu)
                 }
             }
             post {
