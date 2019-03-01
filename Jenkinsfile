@@ -49,8 +49,8 @@ pipeline {
 
                        // GPU + python2
                        DockerBuild(id,
-                                   tag: ['gpu'], 
-                                   build_args: ["tag=${env.tf_ver}-gpu-test",
+                                   tag: ['gpu-test'], 
+                                   build_args: ["tag=${env.tf_ver}-gpu",
                                                 "pyVer=python"])
                     }
 
