@@ -1,6 +1,7 @@
 # Dockerfile has two Arguments: tag and pyVer
 # tag - tag for Tensorflow Image (default: 1.10-gpu-py3)
 # pyVer - python versions as 'python' or 'python3' (default: python3)
+# branch - user repository branch to clone (default: master, other option: test)
 
 # it is still python2 code...
 ARG tag=1.10.0
@@ -13,6 +14,9 @@ LABEL maintainer='V.Kozlov (KIT)'
 
 # it is still python2 code...
 ARG pyVer=python
+
+# What user branch to clone (!)
+ARG branch=master
 
 # Install ubuntu updates and python related stuff
 # link python3 to python, pip3 to pip, if needed
@@ -65,7 +69,7 @@ RUN pip install --no-cache-dir \
 ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
 
 # Install user app:
-RUN git clone https://github.com/deephdc/dogs_breed_det && \
+RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
     cd  dogs_breed_det && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
