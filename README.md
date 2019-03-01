@@ -5,7 +5,10 @@ DEEP-OC-dogs_breed_det
 
 [![Build Status](https://jenkins.indigo-datacloud.eu:8080/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/DEEP-OC-dogs_breed_det/test)](https://jenkins.indigo-datacloud.eu:8080/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/test)
 
-**Be careful! This is 'test' branch!**
+----
+**Be careful, 'test' branch!**
+
+----
 
 This is a container that will simply run the DEEP as a Service API component,
 with the test example to identify Dog's breed, "Dogs breed detector" (src: [deephdc/dogs_breed_det](https://github.com/deephdc/dogs_breed_det)).
