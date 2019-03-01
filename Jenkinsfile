@@ -13,10 +13,11 @@ pipeline {
     }
 
     stages {
-        stage('Docker image building (DEEP-OC)') {
+        stage('Docker image building') {
             when {
                 anyOf {
                    branch 'master'
+                   branch 'test'
                    buildingTag()
                }
             }
