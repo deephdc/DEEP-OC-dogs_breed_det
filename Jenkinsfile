@@ -13,7 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('Docker image building') {
+        stage('Docker image building (DEEP-OC)') {
             when {
                 anyOf {
                    branch 'master'
@@ -26,17 +26,34 @@ pipeline {
                     // build different tags
                     id = "${env.dockerhub_repo}"
 
-                    // CPU + python2 (aka default now)
-                    DockerBuild(id,
-                                tag: ['latest', 'cpu'], 
-                                build_args: ["tag=${env.tf_ver}",
-                                             "pyVer=python"])
+                    if (env.BRANCH_NAME == 'master') {
+                       // CPU + python2 (aka default now)
+                       DockerBuild(id,
+                                   tag: ['latest', 'cpu'], 
+                                   build_args: ["tag=${env.tf_ver}",
+                                                "pyVer=python"])
 
-                    // GPU + python2
-                    DockerBuild(id,
-                                tag: ['gpu'], 
-                                build_args: ["tag=${env.tf_ver}-gpu",
-                                             "pyVer=python"])
+                       // GPU + python2
+                       DockerBuild(id,
+                                   tag: ['gpu'], 
+                                   build_args: ["tag=${env.tf_ver}-gpu",
+                                                "pyVer=python"])
+                    }
+
+                    if (env.BRANCH_NAME == 'test') {
+                       // CPU + python2 (aka default now)
+                       DockerBuild(id,
+                                   tag: ['test', 'cpu-test'], 
+                                   build_args: ["tag=${env.tf_ver}",
+                                                "pyVer=python"])
+
+                       // GPU + python2
+                       DockerBuild(id,
+                                   tag: ['gpu'], 
+                                   build_args: ["tag=${env.tf_ver}-gpu-test",
+                                                "pyVer=python"])
+                    }
+
                 }
             }
             post {
@@ -46,10 +63,13 @@ pipeline {
             }
         }
 
+
+
         stage('Docker Hub delivery') {
             when {
                 anyOf {
                    branch 'master'
+                   branch 'test'
                    buildingTag()
                }
             }
