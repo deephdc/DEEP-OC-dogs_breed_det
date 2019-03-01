@@ -32,13 +32,15 @@ pipeline {
                        DockerBuild(id,
                                    tag: ['latest', 'cpu'], 
                                    build_args: ["tag=${env.tf_ver}",
-                                                "pyVer=python"])
+                                                "pyVer=python",
+                                                "branch=master"])
 
                        // GPU + python2
                        DockerBuild(id,
                                    tag: ['gpu'], 
                                    build_args: ["tag=${env.tf_ver}-gpu",
-                                                "pyVer=python"])
+                                                "pyVer=python",
+                                                "branch=master"])
                     }
 
                     if (env.BRANCH_NAME == 'test') {
@@ -46,13 +48,15 @@ pipeline {
                        DockerBuild(id,
                                    tag: ['test', 'cpu-test'], 
                                    build_args: ["tag=${env.tf_ver}",
-                                                "pyVer=python"])
+                                                "pyVer=python",
+                                                "branch=test"])
 
                        // GPU + python2
                        DockerBuild(id,
                                    tag: ['gpu-test'], 
                                    build_args: ["tag=${env.tf_ver}-gpu",
-                                                "pyVer=python"])
+                                                "pyVer=python",
+                                                "branch=test"])
                     }
 
                 }
