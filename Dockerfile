@@ -1,5 +1,5 @@
-# Dockerfile has two Arguments: tag and pyVer
-# tag - tag for Tensorflow Image (default: 1.10-gpu-py3)
+# Dockerfile has three Arguments: tag, pyVer, branch
+# tag - tag for Tensorflow Image (default: 1.10.0)
 # pyVer - python versions as 'python' or 'python3' (default: python3)
 # branch - user repository branch to clone (default: master, other option: test)
 
@@ -80,4 +80,5 @@ RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
 # Open DEEPaaS port
 EXPOSE 5000
 
+# Account for OpenWisk functionality (deepaas >=0.3.0)
 CMD ["sh", "-c", "deepaas-run --openwhisk-detect --listen-ip 0.0.0.0"]
