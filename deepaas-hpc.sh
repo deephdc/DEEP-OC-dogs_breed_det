@@ -135,7 +135,7 @@ function is_deepaas_up()
     while [ "$running" == false ] && [ $n_try -lt 21 ];
     do
        curl_call=$(curl -s -X GET $c_url -H "$c_args_h1")
-       if (echo $curl_call | grep 'id\":') then
+       if (echo $curl_call | grep -q q'id\":') then
            echo "[INFO] Service is responding"
            running=true
        else
@@ -150,14 +150,34 @@ function is_deepaas_up()
 
 function get_model_id()
 {
-    #curl -X GET "http://127.0.0.1:5000/models/" -H  "accept: application/json"
+    # curl -X GET "http://127.0.0.1:5000/models/" -H  "accept: application/json"
+    #
+    # - have to skip jq since it is not everywhere installed
+    # - also some deepaas-based apps produce curl response in one string
+    #   have to parse this string
+    # Old version:
+    # model_id=$(curl -s -X GET $c_url -H "$c_args_h1" | grep 'id\":' \
+    #                                                  | awk '{print $2}' \
+    #                                                  | cut -d'"' -f2)
 
     c_url="http://${deepaas_host}:${port}/models/"
     c_args_h1="Accept: application/json"
-    model_id=$(curl -s -X GET $c_url -H "$c_args_h1" | jq '.models' \
-                                                     | grep 'id\":' \
-                                                     | awk '{print $2}' \
-                                                     | cut -d'"' -f2)
+
+    curl_call=($(curl -s -X GET $c_url -H "$c_args_h1"))
+
+    found=false
+    counter=0
+    while [ "$found" == false ] && [ $counter -lt ${#curl_call[@]} ];
+    do
+        if [[ "${curl_call[counter]}" == "\"id\":" ]]; then
+           let ielem=counter+1
+           model_id=${curl_call[ielem]}
+           found=true
+        fi
+        let counter=counter+1
+    done
+
+    model_id=$(echo $model_id | cut -d'"' -f2)
 
     if [ -z "$model_id" ]; then
         echo "Unknown"
