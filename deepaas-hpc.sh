@@ -135,7 +135,7 @@ function is_deepaas_up()
     while [ "$running" == false ] && [ $n_try -lt 21 ];
     do
        curl_call=$(curl -s -X GET $c_url -H "$c_args_h1")
-       if (echo $curl_call | grep -q q'id\":') then
+       if (echo $curl_call | grep -q 'id\":') then
            echo "[INFO] Service is responding"
            running=true
        else
