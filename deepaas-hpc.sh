@@ -45,6 +45,8 @@ flaat_disable="yes"
 
 train_args=""
 predict_arg=""
+SCRIPT_PID=$$
+echo $SCRIPT_PID
 
 function usage()
 {
@@ -223,8 +225,6 @@ function start_service()
 {
     #udocker run -p $port:$port  deephdc/deep-oc-generic-container &
 
-    echo "[INFO] Starting service"
-
     IFExist=$(udocker ps |grep "${ContainerName}")
     if [ ${#IFExist} -le 1 ]; then
         udocker pull ${DockerImage}
@@ -271,8 +271,6 @@ function start_service()
 
     (udocker run -p ${port}:5000 ${MountOpts} ${RcloneEnvOpts} \
                  ${ContainerName} deepaas-run --listen-ip=0.0.0.0) &
-
-    echo "[INFO] Service started..."
 }
 
 
@@ -329,10 +327,12 @@ node=$(get_node)
 if [ -z  "$node" ]; then
   echo "[INFO] Node name unknown"
 fi
+
+echo "[INFO] Starting service"
 start_service
+echo "[INFO] Service started..."
+
 is_deepaas_up
-sleep 10
-echo "slept 10..."
 
 #is_service_running $node $port
 #if [ "$?" -ne 0 ]; then
@@ -355,4 +355,14 @@ if [ "${id}" != "Unknown" ]; then
             echo "[INFO] Model loaded: $id. Prediction file name not provided. Exiting."
         fi
     fi
+
+    # Remove all children started by the script
+    echo ""
+    echo "[INFO] Cleaning processes..."
+    echo "[INFO] Killing PID=${SCRIPT_PID} with all its children (PGID=${SCRIPT_PID})"
+    pkill -g $SCRIPT_PID
 fi
+
+###
+# kill -9 $(ps aux |grep deep-oc-dogs-cpu |awk '{print $2}')
+#
