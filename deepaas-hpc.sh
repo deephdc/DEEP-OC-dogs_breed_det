@@ -5,37 +5,57 @@
 #SBATCH --output=slurm-%j.out
 #SBATCH -p fast
 
-# DEFAULT IP:PORT FOR DEEPaaS API
+### DEFAULT IP:PORT FOR DEEPaaS API
 deepaas_host=127.0.0.1
 port=5001
 
-# SET OF PARAMETERS, e.g.
+### SET OF USER PARAMETERS
 DockerImage="deephdc/deep-oc-dogs_breed_det:cpu"
 ContainerName="deep-oc-dogs-cpu"
+
+### Matching between Host directories and Container ones
+# Comment out if not used
+HostData=$HOME/datasets/dogs_breed/data
+ContainerData=/srv/dogs_breed_det/data
+#HostModels=$HOME/datasets/dogs_breed/models
+#ContainerModels=/srv/dogs_breed_det/models
+###
+
+
+### rclone settings
+# rclone configuration is specified either in the rclone.conf file
+# OR via environment settings
+# we skip later environment settings if "HostRclone" is provided
+# HostRclone = Host directory where rclone.conf is located at the host
 rclone_config="/srv/.rclone/rclone.conf"
+HostRclone=$HOME/.config/rclone
+rclone_vendor="nextcloud"
+rclone_type="webdav"
 rclone_url="https://nc.deep-hybrid-datacloud.eu/remote.php/webdav/"
 rclone_user="DEEP-XYXYXYXYXXYXY"
 rclone_pass="jXYXYXYXYXXYXYXYXY"
+### rclone
+
 flaat_disable="yes"
-# HostData=...
-# ContainerData=/srv/xxx/data
-# HostModels=...
-# ContainerModels=/srv/xxx/models
 
-#run_info=- network=- num_epochs=-
+### END OF SET OF USER PARAMETERS
+
+
+### MAIN SCRIPT:
+
 train_args=""
-
+predict_arg=""
 
 function usage()
 {
-    echo "Usage: $0 [-h|--help] [-t|train_args Training arguments]" 1>&2; exit 0;
+    echo "Usage: $0 [-h|--help] [-t|--training Training arguments] [-d|--predict File name used for prediction]" 1>&2; exit 0; 
 }
 
 function check_arguments()
 {
 
-    OPTIONS=h,t:
-    LONGOPTS=help,train_args:
+    OPTIONS=h,t:,d:
+    LONGOPTS=help,training:,predict:
     # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
     #set -o errexit -o pipefail -o noclobber -o nounset
     set  +o nounset
@@ -44,8 +64,6 @@ function check_arguments()
         echo '`getopt --test` failed in this environment.'
         exit 1
     fi
-
-
 
     # -use ! and PIPESTATUS to get exit code with errexit set
     # -temporarily store output to be able to check for errors
@@ -59,8 +77,12 @@ function check_arguments()
     fi
     # read getopt’s output this way to handle the quoting right:
     eval set -- "$PARSED"
-    #echo "$PARSED"
+    echo "$1"   "$2"
 
+    if [ "$1" == "--" ]; then
+        echo "[INFO] No arguments provided. DEEPaaS URL is set to http://${deepaas_host}:${port}/models. Exiting."
+        exit 1
+    fi
     # now enjoy the options in order and nicely split until we see --
     while true; do
         case "$1" in
@@ -68,8 +90,12 @@ function check_arguments()
                 usage
                 shift
                 ;;
-            -t|--train_args)
+            -t|--training)
                 train_args="$2"
+                shift 2
+                ;;
+            -d|--predict)
+                predict_arg="$2"
                 shift 2
                 ;;
             --)
@@ -82,8 +108,7 @@ function check_arguments()
         esac
     done
 
-
-    echo "train_args: $train_args"
+    echo "train_args: '$train_args', predict_arg: '$predict_arg'"
 }
 
 function get_node()
@@ -96,6 +121,7 @@ function get_node()
     echo $node
 }
 
+: << 'COMMENT'
 function is_service_running()
 {
     running=true
@@ -121,27 +147,34 @@ function is_service_running()
     done
     return 0
 }
+COMMENT
 
 function is_deepaas_up()
 {   #curl -X GET "http://127.0.0.1:5000/models/" -H  "accept: application/json"
+
+    if [ -z "$1" ]; then
+       max_try=11
+    else
+       max_try=$1
+    fi
 
     running=false
 
     c_url="http://${deepaas_host}:${port}/models/"
     c_args_h1="Accept: application/json"
 
-    n_try=1
+    itry=1
 
-    while [ "$running" == false ] && [ $n_try -lt 21 ];
+    while [ "$running" == false ] && [ $itry -lt $max_try ];
     do
        curl_call=$(curl -s -X GET $c_url -H "$c_args_h1")
        if (echo $curl_call | grep -q 'id\":') then
            echo "[INFO] Service is responding"
            running=true
        else
-           echo "[INFO] Service is NOT (yet) responding. Try #"$n_try
+           echo "[INFO] Service is NOT (yet) responding. Try #"$itry
            sleep 10
-           let n_try=n_try+1
+           let itry=itry+1
        fi
     done
 
@@ -205,17 +238,40 @@ function start_service()
     fi
     ##udocker setup --nvidia ${ContainerName}
 
-    #udocker run -p 5000:5000 \
-    #         -v ${HostData}:${ContainerData} \
-    #         -v ${HostModels}:${ConatinerModels} \
-    (udocker run -p ${port}:5000 \
-             -e RCLONE_CONFIG=$rclone_config \
-             -e RCLONE_CONFIG_DEEPNC_TYPE="webdav" \
-             -e RCLONE_CONFIG_DEEPNC_VENDOR="nextcloud" \
-             -e RCLONE_CONFIG_DEEPNC_URL=$rclone_url \
-             -e RCLONE_CONFIG_DEEPNC_USER=$rclone_user \
-             -e RCLONE_CONFIG_DEEPNC_PASS=$rclone_pass \
-             ${ContainerName} deepaas-run --listen-ip=0.0.0.0) &
+    MountOpts=""
+
+    if [ ! -z "$HostData" ] && [ ! -z "$ContainerData" ]; then
+        MountOpts+=" -v ${HostData}:${ContainerData}"
+    fi
+    if [ ! -z "$HostModels" ] && [ ! -z "$ContainerModels" ]; then
+        MountOpts+=" -v ${HostModels}:${ContainerModels}"
+    fi
+    if [ ! -z "$HostRclone" ] && [ ! -z "$rclone_config" ]; then
+        rclone_dir=$(dirname "${rclone_config}")
+        MountOpts+=" -v ${HostRclone}:${rclone_dir}"
+    fi
+    echo "MountOpts: "$MountOpts
+
+    RcloneEnvOpts=""
+
+    [[ ! -z "$rclone_config" ]] && RcloneEnvOpts+=" -e RCLONE_CONFIG=${rclone_config}"
+
+    # rclone configuration is specified either in the rclone.conf file
+    # OR via environment settings
+    # we skip environment settings if $HostRclone is provided
+    if [ -z "$HostRclone" ]; then
+        [[ ! -z "$rclone_type" ]] && RcloneEnvOpts+=" -e RCLONE_CONFIG_DEEPNC_TYPE='webdav'"
+        [[ ! -z "$rclone_vendor" ]] && RcloneEnvOpts+=" -e RCLONE_CONFIG_DEEPNC_VENDOR='nextcloud'"
+        [[ ! -z "$rclone_url" ]] && RcloneEnvOpts+="-e RCLONE_CONFIG_DEEPNC_URL=${rclone_url}"
+        [[ ! -z "$rclone_user" ]] && RcloneEnvOpts+=" -e RCLONE_CONFIG_DEEPNC_USER=$rclone_user"
+        [[ ! -z "$rclone_pass" ]] && RcloneEnvOpts+="-e RCLONE_CONFIG_DEEPNC_PASS=$rclone_pass"
+    fi
+
+    echo "RcloneEnvOpts: "$RcloneEnvOpts
+
+    (udocker run -p ${port}:5000 ${MountOpts} ${RcloneEnvOpts} \
+                 ${ContainerName} deepaas-run --listen-ip=0.0.0.0) &
+
     echo "[INFO] Service started..."
 }
 
@@ -236,6 +292,7 @@ function train()
     if [ -z "$curl_call" ]; then
         echo ""
     else
+        echo "[INFO] TRAINING OUTPUT:"
         echo $curl_call
     fi
 }
@@ -245,18 +302,24 @@ function predict()
     # curl -X POST "http://localhost:5000/models/Dogs_Breed/predict"
     # -H "accept: application/json" -H  "Content-Type: multipart/form-data"
     # -F "data=@St_Bernard_wiki_2.jpg;type=image/jpeg"
+
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        return 1
+    fi
     model_id=$1
+    predict_file_name=$2
+
     c_url="http://${deepaas_host}:${port}/models/${model_id}/predict"
     c_args_h1="accept: application/json"
     c_args_h2="Content-Type: multipart/form-data"
-    c_args_f1="data=@St_Bernard_wiki_2.jpg;type=image/jpeg"
+    c_args_f1="data=@${predict_file_name};type=image/jpeg"
 
     echo curl -X POST $c_url -H "$c_args_h1" -H "$c_args_h2" -F "$c_args_f1"
     curl_call=$(curl -X POST $c_url -H "$c_args_h1" -H "$c_args_h2" -F "$c_args_f1")
     if [ -z "$curl_call" ]; then
         echo ""
     else
-        echo "[INFO] OUTPUT:"
+        echo "[INFO] PREDICTION OUTPUT:"
         echo $curl_call
     fi
 }
@@ -284,8 +347,12 @@ echo "ID="$id
 
 if [ "${id}" != "Unknown" ]; then
     if [ "$train_args" ]; then
-       train "$id" "$train_args"
+        train "$id" "$train_args"
     else
-       predict "$id"
+        if [ "$predict_arg" ]; then
+            predict "$id" "$predict_arg"
+        else
+            echo "[INFO] Model loaded: $id. Prediction file name not provided. Exiting."
+        fi
     fi
 fi
