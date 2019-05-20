@@ -40,7 +40,6 @@
             "title": "Mesos (CPU)",
             "url": "https://raw.githubusercontent.com/indigo-dc/tosca-templates/master/deep-oc/deep-oc-mesos-webdav.yml",
             "inputs": [
-                "docker_image",
                 "rclone_conf",
                 "rclone_url",
                 "rclone_vendor",
