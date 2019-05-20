@@ -17,23 +17,23 @@
            "In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 770-778. 2016. https://arxiv.org/abs/1512.03385 \n",
            " * InceptionV3: Christian Szegedy, Vincent Vanhoucke, Sergey Ioffe, Jon Shlens, Zbigniew Wojna; The IEEE Conference on Computer Vision ",
             "and Pattern Recognition (CVPR), 2016, pp. 2818-2826. https://arxiv.org/abs/1512.00567 \n",
-		"[dogs-aws]: Dogs dataset: https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip \n",
+		"[dogs-aws]: Dogs dataset: https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip \n"
 	],
     "keywords": [
         "docker",
         "tensorflow",
-        "cnn",
+        "cnn"
     ],
     "license": "MIT",
     "date_creation": "2019-01-01",
     "sources": {
 		"dockerfile_repo": "https://github.com/deephdc/DEEP-OC-dogs_breed_det",
 		"docker_registry_repo": "deephdc/deep-oc-dogs_breed_det",
-		"code": "https://github.com/deephdc/dogs_breed_det",
+		"code": "https://github.com/deephdc/dogs_breed_det"
 	},
     "continuous_integration": {
         "build_status_badge": "https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/DEEP-OC-dogs_breed_det/master",
-        "build_status_url": "https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master",
+        "build_status_url": "https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master"
     },
     "tosca": [
         {
