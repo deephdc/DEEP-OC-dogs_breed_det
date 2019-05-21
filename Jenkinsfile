@@ -21,11 +21,14 @@ pipeline {
         }
         stage('Docker image building') {
             when {
-                anyOf {
-                   branch 'master'
-                   branch 'test'
-                   buildingTag()
-               }
+                allOf {
+                    changeset 'Dockerfile'
+                    anyOf {
+                        branch 'master'
+                        branch 'test'
+                        buildingTag()
+                    }
+                }
             }
             steps{
                 checkout scm
@@ -78,11 +81,14 @@ pipeline {
 
         stage('Docker Hub delivery') {
             when {
-                anyOf {
-                   branch 'master'
-                   branch 'test'
-                   buildingTag()
-               }
+                allOf {
+                    changeset 'Dockerfile'
+                    anyOf {
+                        branch 'master'
+                        branch 'test'
+                        buildingTag()
+                    }
+                }
             }
             steps{
                 script {
@@ -102,7 +108,10 @@ pipeline {
 
         stage("Render metadata on the marketplace") {
             when {
-                branch 'master'
+                allOf {
+                    branch 'master'
+                    changeset 'metadata.json'
+                }
             }
             steps {
                 script {
