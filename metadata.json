@@ -7,7 +7,7 @@
            "(VGG16 | VGG19 | Resnet50 | InceptionV3)[CNN models] the last layer is removed, ", 
            "then two new Fully Connected (FC) layers are added, which are trained. ",
            "",
-           "Original dataset [dogs-aws] consists of 8351 dog’s images for 133 breeds divided into ",
+           "Original dataset [dogs-aws] consists of 8351 dog's images for 133 breeds divided into ",
            "training set (6680 pictures), validation set (835), and test set (836), and amounts for 1080 MB in zipped format.",
            "",
 		"**References**\n",
