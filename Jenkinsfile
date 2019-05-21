@@ -21,13 +21,10 @@ pipeline {
         }
         stage('Docker image building') {
             when {
-                allOf {
-                    changeset 'Dockerfile'
-                    anyOf {
-                        branch 'master'
-                        branch 'test'
-                        buildingTag()
-                    }
+                anyOf {
+                    branch 'master'
+                    branch 'test'
+                    buildingTag()
                 }
             }
             steps{
@@ -81,13 +78,10 @@ pipeline {
 
         stage('Docker Hub delivery') {
             when {
-                allOf {
-                    changeset 'Dockerfile'
-                    anyOf {
-                        branch 'master'
-                        branch 'test'
-                        buildingTag()
-                    }
+                anyOf {
+                    branch 'master'
+                    branch 'test'
+                    buildingTag()
                 }
             }
             steps{
