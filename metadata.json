@@ -2,7 +2,7 @@
     "title": "DEEP OC Dogs breed detection",
     "summary": "A test application to identify Dog's breed as an example for DEEPaaS API.",
     "description": [
-		"This test application applies Transfer learning for dog’s breed identification,", 
+		"This test application applies Transfer learning for dog's breed identification,", 
            "which is implemented by means of Tensorflow and Keras: \n\n From a pre-trained CNN model ",
            "(VGG16 | VGG19 | Resnet50 | InceptionV3)[CNN models] the last layer is removed, ", 
            "then two new Fully Connected (FC) layers are added, which are trained. ",
