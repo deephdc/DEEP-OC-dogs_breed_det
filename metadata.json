@@ -25,7 +25,7 @@
         "cnn"
     ],
     "license": "MIT",
-    "date_creation": "2018-18-11",
+    "date_creation": "2018-11-18",
     "sources": {
 		"dockerfile_repo": "https://github.com/deephdc/DEEP-OC-dogs_breed_det",
 		"docker_registry_repo": "deephdc/deep-oc-dogs_breed_det",
