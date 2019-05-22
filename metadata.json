@@ -5,7 +5,7 @@
 		"This test application applies Transfer learning for dog's breed identification,", 
            "which is implemented by means of Tensorflow and Keras: \n\n From a pre-trained CNN model ",
            "(VGG16 | VGG19 | Resnet50 | InceptionV3) [1] the last layer is removed, ", 
-           "then two new Fully Connected (FC) layers are added, which are trained. ",
+           "then two new Fully Connected (FC) layers are added, which are trained on the dog's dataset. ",
            "",
            "The original dataset [2] consists of 8351 dog's images for 133 breeds divided into ",
            "training set (6680 pictures), validation set (835), and test set (836), and amounts for 1080 MB in zipped format.",
