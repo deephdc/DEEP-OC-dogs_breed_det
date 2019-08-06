@@ -22,7 +22,7 @@ with the test example to identify Dog's breed, "Dogs breed detector" (src: [deep
 ## Directly from Docker Hub
 
 To run the Docker container directly from Docker Hub and start using the API
-simply run the following command:
+simply run the following command (watch out for tags for CPU and GPU versions):
 
 ```bash
 $ docker run -ti -p 5000:5000 deephdc/deep-oc-dogs_breed_det
