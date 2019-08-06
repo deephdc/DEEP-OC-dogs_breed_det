@@ -60,13 +60,16 @@ RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
-    deepaas \
+    'deepaas>=0.3.0' \
     flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
 # Disable FLAAT authentication by default
 ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
+
+# Install DEEP debug_log scripts:
+RUN git clone https://github.com/deephdc/deep-debug_log
 
 # Install user app:
 RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
@@ -80,4 +83,4 @@ RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
 # Open DEEPaaS port
 EXPOSE 5000
 
-CMD ["sh", "-c", "deepaas-run --openwhisk-detect --listen-ip 0.0.0.0"]
+CMD ["deepaas-run", "--openwhisk-detect", "--listen-ip", "0.0.0.0", "--listen-port", "5000"] 
