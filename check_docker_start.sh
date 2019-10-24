@@ -40,13 +40,14 @@ else
     exit 2
 fi
 
-## now try to install jq manually
+## try to install jq manually
 wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
 chmod +x ./jq
 
 # Start docker, let system to bind the port
+echo "[INFO] Starting Docker image ${DOCKER_IMAGE}"
 docker run --name ${CONTAINER_NAME} -p ${DEEPaaS_PORT} ${DOCKER_IMAGE} &
-sleep 15
+sleep 30
 
 # Figure out which host port was binded
 HOST_PORT=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "'"$DEEPaaS_PORT/tcp"'") 0).HostPort }}'  ${CONTAINER_NAME})
