@@ -35,6 +35,9 @@ pipeline {
                                                          "pyVer=python",
                                                          "branch=master"])
 
+                       // Check that default CMD is correct by starting the image
+                       sh "bash ./check_docker_start.sh ${env.dockerhub_repo}"
+
                        // GPU + python2
                        id_gpu = DockerBuild(id,
                                             tag: ['gpu'], 
@@ -50,6 +53,9 @@ pipeline {
                                             build_args: ["tag=${env.tf_ver}",
                                                          "pyVer=python",
                                                          "branch=test"])
+
+                       // Check that default CMD is correct by starting the image
+                       sh "bash ./check_docker_start.sh ${env.dockerhub_repo}:test"
 
                        // GPU + python2
                        id_gpu = DockerBuild(id,
