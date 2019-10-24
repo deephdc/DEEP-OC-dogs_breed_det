@@ -40,6 +40,10 @@ else
     exit 2
 fi
 
+## now try to install jq manually
+wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+chmod +x ./jq
+
 # Start docker, let system to bind the port
 docker run --name ${CONTAINER_NAME} -p ${DEEPaaS_PORT} ${DOCKER_IMAGE} &
 sleep 15
@@ -55,11 +59,14 @@ META_DATA=$(curl -X GET "http://localhost:${HOST_PORT}/models/" -H "accept: appl
 EXPECT_AUTHOR=${EXPECT_AUTHOR//_/-}
 EXPECT_NAME=${EXPECT_NAME//_/-}
 
-TEST_AUTHOR=$(echo ${META_DATA} |jq '.models[0].Author')
-TEST_NAME=$(echo ${META_DATA} |jq '.models[0].Name')
+TEST_AUTHOR=$(echo ${META_DATA} |./jq '.models[0].Author')
+TEST_NAME=$(echo ${META_DATA} |./jq '.models[0].Name')
 
 TEST_AUTHOR=${TEST_AUTHOR//_/-}
 TEST_NAME=${TEST_NAME//_/-}
+
+# remove downloaded jq
+rm ./jq
 
 if [[ "$TEST_AUTHOR" != "${EXPECT_AUTHOR}" ]]; then
     echo "[ERROR] Author does not match! Expected: ${EXPECT_AUTHOR}. Got: $TEST_AUTHOR"
