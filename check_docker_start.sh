@@ -47,13 +47,39 @@ chmod +x ./jq
 # Start docker, let system to bind the port
 echo "[INFO] Starting Docker image ${DOCKER_IMAGE}"
 docker run --name ${CONTAINER_NAME} -p ${DEEPaaS_PORT} ${DOCKER_IMAGE} &
-sleep 30
-
+sleep 20
 # Figure out which host port was binded
 HOST_PORT=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "'"$DEEPaaS_PORT/tcp"'") 0).HostPort }}'  ${CONTAINER_NAME})
+echo "[INFO] bind port: ${HOST_PORT}"
+
+# Trying to access the deployment
+c_url="http://localhost:${HOST_PORT}/models/"
+c_args_h1="Accept: application/json"
+
+max_try=10     # max number of tries to access DEEPaaS API
+itry=1         # initial try number
+running=false
+
+while [ "$running" == false ] && [ $itry -lt $max_try ];
+    do
+       curl_call=$(curl -s -X GET $c_url -H "$c_args_h")
+       if (echo $curl_call | grep -q 'id\":') then
+           echo "[INFO] Service is responding (tries = $itry)"
+           running=true
+       else
+           echo "[INFO] Service is NOT (yet) responding. Try #"$itry
+           sleep 10
+           let itry=itry+1
+       fi
+    done
+
+if [[ $itry -ge $max_try ]]; then
+    echo "[ERROR] DEEPaaS API does not respond (tries = $itry). Exiting"
+    exit 3
+fi
 
 # Access the running DEEPaaS API. Get models
-META_DATA=$(curl -X GET "http://localhost:${HOST_PORT}/models/" -H "accept: application/json")
+META_DATA=$(curl -X GET $c_url -H "$c_arg_h")
 
 # Check if Author and Name correspond to the expected values
 # Remove uncertainty on "-" or "_" signs
@@ -71,11 +97,11 @@ rm ./jq
 
 if [[ "$TEST_AUTHOR" != "${EXPECT_AUTHOR}" ]]; then
     echo "[ERROR] Author does not match! Expected: ${EXPECT_AUTHOR}. Got: $TEST_AUTHOR"
-    exit 3
+    exit 4
 fi
 if [ "$TEST_NAME" != "${EXPECT_NAME}" ]; then
     echo "[ERROR] Name does not match! Expected: ${EXPECT_NAME}. Got: $TEST_NAME"
-    exit 4
+    exit 5
 fi
 
 echo "[SUCCESS]. Author=${TEST_AUTHOR}, Name=${TEST_NAME}. Now removing ${CONTAINER_NAME} container"
