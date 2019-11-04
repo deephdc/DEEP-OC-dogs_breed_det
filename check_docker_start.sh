@@ -15,8 +15,7 @@
 ###
 
 DOCKER_IMAGE=deephdc/deep-oc-generic
-EXPECT_AUTHOR="\"V.Kozlov (KIT)\""
-EXPECT_NAME="\"dogs_breed_det\""
+META_DATA_FIELDS=("name\":" "Author\":" "License\":" "Author-email\":")
 CONTAINER_NAME=$(date +%s)
 DEEPaaS_PORT=5000          # DEEPaaS Port inside the container
 
@@ -39,10 +38,6 @@ else
     echo $USAGEMESSAGE
     exit 2
 fi
-
-## try to install jq manually
-wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-chmod +x ./jq
 
 # Start docker, let system to bind the port
 echo "[INFO] Starting Docker image ${DOCKER_IMAGE}"
@@ -78,42 +73,24 @@ if [[ $itry -ge $max_try ]]; then
     exit 3
 fi
 
-# Access the running DEEPaaS API. Get models
-META_DATA=$(curl -X GET $c_url -H "$c_arg_h")
+# Access the running DEEPaaS API. Check that various fields are present
+curl_call=$(curl -s -X GET $c_url -H "$c_args_h")
+for field in ${META_DATA_FIELDS[*]}
+do
+   if (echo $curl_call | grep -iq $field) then
+       echo "[INFO] $field is present in the get_metadata() response."
+       running=true
+   else
+       echo "[ERROR] $field is NOT present in the get_metadata() response. Exiting..."
+       exit 4
+   fi
+done
 
-# Check if Author and Name correspond to the expected values
-# Remove uncertainty on "-" or "_" signs
-EXPECT_AUTHOR=${EXPECT_AUTHOR//_/-}
-EXPECT_NAME=${EXPECT_NAME//_/-}
-
-TEST_AUTHOR=$(echo ${META_DATA} |./jq '.models[0].Author')
-TEST_NAME=$(echo ${META_DATA} |./jq '.models[0].Name')
-
-TEST_AUTHOR=${TEST_AUTHOR//_/-}
-TEST_NAME=${TEST_NAME//_/-}
-
-# remove downloaded jq
-rm ./jq
-
-if [[ "$TEST_AUTHOR" != "${EXPECT_AUTHOR}" ]]; then
-    echo "[ERROR] Author does not match! Expected: ${EXPECT_AUTHOR}. Got: $TEST_AUTHOR"
-    exit 4
-fi
-if [ "$TEST_NAME" != "${EXPECT_NAME}" ]; then
-    echo "[ERROR] Name does not match! Expected: ${EXPECT_NAME}. Got: $TEST_NAME"
-    exit 5
-fi
-
-echo "[SUCCESS]. Author=${TEST_AUTHOR}, Name=${TEST_NAME}. Now removing ${CONTAINER_NAME} container"
+echo "[SUCCESS]: DEEPaaS API starts"
+echo "[SUCCESS]: Successfully checked for: ${META_DATA_FIELDS[*]}."
+echo "[INFO]: Now removing ${CONTAINER_NAME} container"
 docker stop ${CONTAINER_NAME}
 docker rm ${CONTAINER_NAME}
-echo "[INFO] Finished. Exit with the code 0 (success)"
+echo "[SUCCESS] Finished. Exit with the code 0 (success)"
 exit 0
 
-### todo: the following can be removed #vykozlov
-# one other method using "docker port" command to identify the host port:
-###
-#docker_port_info=$(docker port ${CONTAINER_NAME} $DEEPaaS_PORT/tcp)
-#HOST_BIND=(${docker_port_info//:/" "})
-#HOST_PORT=${HOST_BIND[1]}
-####
