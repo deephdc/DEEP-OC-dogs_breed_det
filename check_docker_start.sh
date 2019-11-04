@@ -11,16 +11,29 @@
 # the bash script starts a DEEP-OC container
 # and checks that the default execution is ok 
 # (defined in the CMD field of the Dockerfile)
-# by requesting get_metadata method
+# by requesting get_metadata method.
+# Also checks if various fields are present in the response.
 ###
 
+### Main configuration
+# Default Docker image, can be re-defiend
 DOCKER_IMAGE=deephdc/deep-oc-generic
 META_DATA_FIELDS=("name\":" "Author\":" "License\":" "Author-email\":")
-CONTAINER_NAME=$(date +%s)
-DEEPaaS_PORT=5000          # DEEPaaS Port inside the container
+# Container name: number of seconds since 1970 + a random number
+CONTAINER_NAME=$(date +%s)"_"$(($RANDOM))
+# DEEPaaS Port inside the container
+DEEPaaS_PORT=5000
+###
 
 ### Usage message (params can be re-defined) ###
 USAGEMESSAGE="Usage: $0 <docker_image>"
+
+# function to remove the Docker container
+function remove_container() 
+{   echo "[INFO]: Now removing ${CONTAINER_NAME} container"
+    docker stop ${CONTAINER_NAME}
+    docker rm ${CONTAINER_NAME}
+}
 
 #### Parse input ###
 arr=("$@")
@@ -41,6 +54,7 @@ fi
 
 # Start docker, let system to bind the port
 echo "[INFO] Starting Docker image ${DOCKER_IMAGE}"
+echo "[INFO] Container name: ${CONTAINER_NAME}"
 docker run --name ${CONTAINER_NAME} -p ${DEEPaaS_PORT} ${DOCKER_IMAGE} &
 sleep 20
 # Figure out which host port was binded
@@ -69,28 +83,39 @@ while [ "$running" == false ] && [ $itry -lt $max_try ];
     done
 
 if [[ $itry -ge $max_try ]]; then
-    echo "[ERROR] DEEPaaS API does not respond (tries = $itry). Exiting"
+    echo "======="
+    echo "[ERROR] DEEPaaS API does not respond (tries = $itry). Exiting..."
+    remove_container
     exit 3
 fi
 
 # Access the running DEEPaaS API. Check that various fields are present
 curl_call=$(curl -s -X GET $c_url -H "$c_args_h")
+fields_ok=true
+fields_missing=()
+
 for field in ${META_DATA_FIELDS[*]}
 do
    if (echo $curl_call | grep -iq $field) then
        echo "[INFO] $field is present in the get_metadata() response."
-       running=true
    else
-       echo "[ERROR] $field is NOT present in the get_metadata() response. Exiting..."
-       exit 4
+       echo "[ERROR] $field is NOT present in the get_metadata() response."
+       fields_ok=false
+       fields_missing+=($field)
    fi
 done
 
+echo "======="
+# If some fields are missing, print them and exit
+if [ "$fields_ok" == false ]; then
+   echo "[ERROR] The following fields are missing: (${fields_missing[*]}). Exiting..."
+   remove_container
+   exit 4
+fi
+
 echo "[SUCCESS]: DEEPaaS API starts"
-echo "[SUCCESS]: Successfully checked for: ${META_DATA_FIELDS[*]}."
-echo "[INFO]: Now removing ${CONTAINER_NAME} container"
-docker stop ${CONTAINER_NAME}
-docker rm ${CONTAINER_NAME}
+echo "[SUCCESS]: Successfully checked for: (${META_DATA_FIELDS[*]})."
+remove_container
 echo "[SUCCESS] Finished. Exit with the code 0 (success)"
 exit 0
 
