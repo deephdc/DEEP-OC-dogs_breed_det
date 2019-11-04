@@ -56,10 +56,37 @@ fi
 echo "[INFO] Starting Docker image ${DOCKER_IMAGE}"
 echo "[INFO] Container name: ${CONTAINER_NAME}"
 docker run --name ${CONTAINER_NAME} -p ${DEEPaaS_PORT} ${DOCKER_IMAGE} &
-sleep 20
+
+HOST_PORT=""
+port_ok=false
+max_try=5     # max number of tries to get HOST_PORT
+itry=1        # initial try number
+
+sleep 10
 # Figure out which host port was binded
-HOST_PORT=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "'"$DEEPaaS_PORT/tcp"'") 0).HostPort }}'  ${CONTAINER_NAME})
-echo "[INFO] bind port: ${HOST_PORT}"
+while [ "$port_ok" == false ] && [ $itry -lt $max_try ];
+do
+    HOST_PORT=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "'"$DEEPaaS_PORT/tcp"'") 0).HostPort }}'  ${CONTAINER_NAME})
+    # Check that HOST_PORT is a number
+    # https://stackoverflow.com/questions/806906/how-do-i-test-if-a-variable-is-a-number-in-bash
+    if [ ! -z "${HOST_PORT##*[!0-9]*}" ]; then
+        port_ok=true
+        echo "[INFO] Bind the HOST_PORT=${HOST_PORT}"
+    else
+        echo "[INFO] Did not get a right HOST_PORT (yet). Try #"$itry
+        sleep 10
+        let itry=itry+1
+    fi
+done
+
+# If could not bind a port, delete the container and exit
+if [[ $itry -ge $max_try ]]; then
+    echo "======="
+    echo "[ERROR] Did not bind a right HOST_PORT (tries = $itry). Exiting..."
+    remove_container
+    exit 3
+fi
+
 
 # Trying to access the deployment
 c_url="http://localhost:${HOST_PORT}/models/"
@@ -70,23 +97,24 @@ itry=1         # initial try number
 running=false
 
 while [ "$running" == false ] && [ $itry -lt $max_try ];
-    do
-       curl_call=$(curl -s -X GET $c_url -H "$c_args_h")
-       if (echo $curl_call | grep -q 'id\":') then
-           echo "[INFO] Service is responding (tries = $itry)"
-           running=true
-       else
-           echo "[INFO] Service is NOT (yet) responding. Try #"$itry
-           sleep 10
-           let itry=itry+1
-       fi
-    done
+do
+   curl_call=$(curl -s -X GET $c_url -H "$c_args_h")
+   if (echo $curl_call | grep -q 'id\":') then
+       echo "[INFO] Service is responding (tries = $itry)"
+       running=true
+   else
+       echo "[INFO] Service is NOT (yet) responding. Try #"$itry
+       sleep 10
+       let itry=itry+1
+   fi
+done
 
+# If could not access the deployment, delete the container and exit
 if [[ $itry -ge $max_try ]]; then
     echo "======="
     echo "[ERROR] DEEPaaS API does not respond (tries = $itry). Exiting..."
     remove_container
-    exit 3
+    exit 4
 fi
 
 # Access the running DEEPaaS API. Check that various fields are present
@@ -106,13 +134,14 @@ do
 done
 
 echo "======="
-# If some fields are missing, print them and exit
+# If some fields are missing, print them, delete the container and exit
 if [ "$fields_ok" == false ]; then
    echo "[ERROR] The following fields are missing: (${fields_missing[*]}). Exiting..."
    remove_container
-   exit 4
+   exit 5
 fi
 
+# if got here, all worked fine
 echo "[SUCCESS]: DEEPaaS API starts"
 echo "[SUCCESS]: Successfully checked for: (${META_DATA_FIELDS[*]})."
 remove_container
