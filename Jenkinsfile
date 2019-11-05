@@ -9,7 +9,8 @@ pipeline {
 
     environment {
         dockerhub_repo = "deephdc/deep-oc-dogs_breed_det"
-        tf_ver = "1.10.0"
+        base_cpu_tag = "1.10.0"
+        base_gpu_tag = "1.10.0-gpu"
     }
 
     stages {
@@ -31,7 +32,7 @@ pipeline {
                        // CPU + python2 (aka default now)
                        id_cpu = DockerBuild(id,
                                             tag: ['latest', 'cpu'], 
-                                            build_args: ["tag=${env.tf_ver}",
+                                            build_args: ["tag=${env.base_cpu_tag}",
                                                          "pyVer=python",
                                                          "branch=master"])
 
@@ -41,7 +42,7 @@ pipeline {
                        // GPU + python2
                        id_gpu = DockerBuild(id,
                                             tag: ['gpu'], 
-                                            build_args: ["tag=${env.tf_ver}-gpu",
+                                            build_args: ["tag=${env.base_gpu_tag}",
                                                          "pyVer=python",
                                                          "branch=master"])
                     }
@@ -50,7 +51,7 @@ pipeline {
                        // CPU + python2 (aka default now)
                        id_cpu = DockerBuild(id,
                                             tag: ['test', 'cpu-test'], 
-                                            build_args: ["tag=${env.tf_ver}",
+                                            build_args: ["tag=${env.base_cpu_tag}",
                                                          "pyVer=python",
                                                          "branch=test"])
 
@@ -60,7 +61,7 @@ pipeline {
                        // GPU + python2
                        id_gpu = DockerBuild(id,
                                             tag: ['gpu-test'], 
-                                            build_args: ["tag=${env.tf_ver}-gpu",
+                                            build_args: ["tag=${env.base_gpu_tag}",
                                                          "pyVer=python",
                                                          "branch=test"])
                     }
@@ -73,6 +74,7 @@ pipeline {
                 }
             }
         }
+
 
 
         stage('Docker Hub delivery') {
