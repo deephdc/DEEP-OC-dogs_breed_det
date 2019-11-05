@@ -43,7 +43,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
        fi; \
     fi && \
     python --version && \
-    pip install --upgrade pip && \
     pip --version
 
 # Set LANG environment
@@ -80,7 +79,7 @@ RUN git clone https://github.com/deephdc/deep-debug_log /srv/.debug_log
 ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
-RUN if [ "x$jlab" ]; then \
+RUN if [ "$jlab" = true ]; then \
        apt update && \
        apt install -y nodejs npm && \
        apt-get clean && \
