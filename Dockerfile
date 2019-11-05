@@ -43,6 +43,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
        fi; \
     fi && \
     python --version && \
+    pip install --upgrade pip && \
     pip --version
 
 # Set LANG environment
@@ -80,7 +81,10 @@ ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
 RUN if [ "x$jlab" ]; then \
-       pip install --no-cache-dir jupyterlab ; \ 
+       apt update && \
+       apt install -y nodejs npm && \
+       apt-get clean && \
+       pip install --no-cache-dir jupyterlab ; \
        git clone https://github.com/deephdc/deep-jupyter /srv/.jupyter ; \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
