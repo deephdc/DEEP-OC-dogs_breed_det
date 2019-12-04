@@ -9,7 +9,8 @@ pipeline {
 
     environment {
         dockerhub_repo = "deephdc/deep-oc-dogs_breed_det"
-        tf_ver = "1.10.0"
+        base_cpu_tag = "1.10.0"
+        base_gpu_tag = "1.10.0-gpu"
     }
 
     stages {
@@ -28,48 +29,55 @@ pipeline {
                 }
             }
             steps{
-                checkout scm
-                script {
-                    // build different tags
-                    id = "${env.dockerhub_repo}"
+                dir('check_oc_artifact'){
+                    // clone checking scripts
+                    git url: 'https://github.com/deephdc/deep-check_oc_artifact'
+                }
+                dir('deep-oc-user_app'){
+                    checkout scm
+                    script {
+                        // build different tags
+                        id = "${env.dockerhub_repo}"
 
-                    if (env.BRANCH_NAME == 'master') {
-                       // CPU + python2 (aka default now)
-                       id_cpu = DockerBuild(id,
+                        if (env.BRANCH_NAME == 'master') {
+                           // CPU + python2 (aka default now)
+                           id_cpu = DockerBuild(id,
                                             tag: ['latest', 'cpu'], 
-                                            build_args: ["tag=${env.tf_ver}",
+                                            build_args: ["tag=${env.base_cpu_tag}",
                                                          "pyVer=python",
                                                          "branch=master"])
 
-                       // Check that default CMD is correct by starting the image
-                       sh "bash ./check_docker_start.sh ${env.dockerhub_repo}"
+                           // Check that default CMD is correct by starting the image
+                           sh "bash ../check_oc_artifact/check_artifact.sh ${env.dockerhub_repo}"
 
-                       // GPU + python2
-                       id_gpu = DockerBuild(id,
+                           // GPU + python2
+                           id_gpu = DockerBuild(id,
                                             tag: ['gpu'], 
-                                            build_args: ["tag=${env.tf_ver}-gpu",
+                                            build_args: ["tag=${env.base_gpu_tag}",
                                                          "pyVer=python",
                                                          "branch=master"])
-                    }
+                        }
 
-                    if (env.BRANCH_NAME == 'test') {
-                       // CPU + python2 (aka default now)
-                       id_cpu = DockerBuild(id,
+                        if (env.BRANCH_NAME == 'test') {
+                           // CPU + python2 (aka default now)
+                           id_cpu = DockerBuild(id,
                                             tag: ['test', 'cpu-test'], 
-                                            build_args: ["tag=${env.tf_ver}",
+                                            build_args: ["tag=${env.base_cpu_tag}",
                                                          "pyVer=python",
                                                          "branch=test"])
-                       // Check that default CMD is correct by starting the image
-                       sh "bash ./check_docker_start.sh ${env.dockerhub_repo}:test"
 
-                       // GPU + python2
-                       id_gpu = DockerBuild(id,
+                           // Check that default CMD is correct by starting the image
+                           sh "bash ../check_oc_artifact/check_artifact.sh ${env.dockerhub_repo}:test"
+
+                           // GPU + python2
+                           id_gpu = DockerBuild(id,
                                             tag: ['gpu-test'], 
-                                            build_args: ["tag=${env.tf_ver}-gpu",
+                                            build_args: ["tag=${env.base_gpu_tag}",
                                                          "pyVer=python",
                                                          "branch=test"])
-                    }
+                        }
 
+                    }
                 }
             }
             post {
@@ -78,7 +86,6 @@ pipeline {
                 }
             }
         }
-
 
 
         stage('Docker Hub delivery') {

@@ -1,11 +1,10 @@
-<div align="center">
-<img src="https://marketplace.deep-hybrid-datacloud.eu/images/logo-deep.png" alt="logo" width="300"/>
-</div>
-
 DEEP-OC-dogs_breed_det
 ============================================
 
+![DEEP-Hybrid-DataCloud logo](https://docs.deep-hybrid-datacloud.eu/en/latest/_static/logo.png)
+
 [![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code%2FDEEP-OC-org%2FDEEP-OC-dogs_breed_det%2Fmaster)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master/)
+
 
 This is a container that will simply run the DEEP as a Service API component,
 with the test example to identify Dog's breed, "Dogs breed detector" (src: [deephdc/dogs_breed_det](https://github.com/deephdc/dogs_breed_det)).
@@ -16,7 +15,7 @@ with the test example to identify Dog's breed, "Dogs breed detector" (src: [deep
 ## Directly from Docker Hub
 
 To run the Docker container directly from Docker Hub and start using the API
-simply run the following command:
+simply run the following command (watch out for tags for CPU and GPU versions):
 
 ```bash
 $ docker run -ti -p 5000:5000 deephdc/deep-oc-dogs_breed_det
@@ -25,6 +24,9 @@ $ docker run -ti -p 5000:5000 deephdc/deep-oc-dogs_breed_det
 This command will pull the Docker container from the Docker Hub
 [`deephdc`](https://hub.docker.com/u/deephdc/) organization.
 
+**N.B.** For either CPU-based or GPU-based images you can also use [udocker](https://github.com/indigo-dc/udocker).
+
+
 ## Building the container
 
 If you want to build the container directly in your machine (because you want
@@ -32,7 +34,7 @@ to modify the `Dockerfile` for instance) follow the following instructions:
 
 Building the container:
 
-1. Get the `DEEP-OC-dogs_breed_det` repository (this repo):
+1. Get the `DEEP-OC-dogs_breed_det` repository:
 
     ```bash
     $ git clone https://github.com/indigo-dc/DEEP-OC-dogs_breed_det
@@ -70,7 +72,7 @@ Original dataset with dog images for training can be found at [udacity-aind/dogI
 Trained model is stored inside the container in
 /srv/dogs_breed_det/models
 
-## Running the container
+## Running the container with local images
 In the following example we suppose that dog images are located in $HOME/dogImages directory at your host machine. Then to run the Docker container for training execute:
 
 ```bash
@@ -86,7 +88,5 @@ docker-compose.yml allows you to run the application with various configurations
 **N.B!** docker-compose.yml is of version '2.3', one needs docker 17.06.0+ and docker-compose ver.1.16.0+, see https://docs.docker.com/compose/install/
 
 If you want to use Nvidia GPU (dogs-gpu), you need nvidia-docker and docker-compose ver1.19.0+ , see [nvidia/FAQ](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#do-you-support-docker-compose)
-
-
 
 
