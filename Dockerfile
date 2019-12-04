@@ -6,7 +6,7 @@
 # it is still python2 code...
 ARG tag=1.10.0
 
-# Base image, e.g. tensorflow/tensorflow:1.7.0
+# Base image, e.g. tensorflow/tensorflow:1.10.0
 FROM tensorflow/tensorflow:${tag}
 
 LABEL maintainer='V.Kozlov (KIT)'
@@ -16,10 +16,10 @@ LABEL maintainer='V.Kozlov (KIT)'
 ARG pyVer=python
 
 # What user branch to clone (!)
-ARG branch=test
+ARG branch=master
 
 # If to install JupyterLab
-ARG jlab=true
+ARG jlab=false
 
 # Install ubuntu updates and python related stuff
 # link python3 to python, pip3 to pip, if needed
@@ -80,12 +80,10 @@ ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
 RUN if [ "$jlab" = true ]; then \
-       apt update && \
-       apt install -y nodejs npm && \
-       apt-get clean && \
        pip install --no-cache-dir jupyterlab ; \
        git clone https://github.com/deephdc/deep-jupyter /srv/.jupyter ; \
     else echo "[INFO] Skip JupyterLab installation!"; fi
+
 
 # Install user app:
 RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
