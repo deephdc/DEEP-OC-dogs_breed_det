@@ -16,7 +16,7 @@ LABEL maintainer='V.Kozlov (KIT)'
 ARG pyVer=python
 
 # What user branch to clone (!)
-ARG branch=master
+ARG branch=test
 
 # If to install JupyterLab
 ARG jlab=true
@@ -64,7 +64,7 @@ RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
-    'deepaas>=0.5.0' \
+    'deepaas==0.5.1' \
     flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
@@ -99,4 +99,8 @@ RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
 # Open DEEPaaS port
 EXPOSE 5000
 
-CMD ["deepaas-run", "--openwhisk-detect", "--listen-ip", "0.0.0.0", "--listen-port", "5000"] 
+# Open Monitoring  and Jupyter ports
+EXPOSE 6006 8888
+
+# Account for OpenWisk functionality (deepaas 0.5.1)
+CMD ["deepaas-run", "--openwhisk-detect", "--listen-ip", "0.0.0.0", "--listen-port", "5000"]
