@@ -21,10 +21,10 @@ LABEL maintainer='V.Kozlov (KIT)'
 ARG pyVer=python3
 
 # What user branch to clone (!)
-ARG branch=api_v2
+ARG branch=master
 
 # If to install JupyterLab
-ARG jlab=true
+ARG jlab=false
 
 # Install ubuntu updates and python related stuff
 # link python3 to python, pip3 to pip, if needed
