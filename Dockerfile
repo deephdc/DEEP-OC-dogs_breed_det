@@ -2,9 +2,14 @@
 # tag - tag for Tensorflow Image (default: 1.10.0)
 # pyVer - python versions as 'python' or 'python3' (default: python3)
 # branch - user repository branch to clone (default: master, other option: test)
+#
+# To build the image:
+# $ docker build -t <dockerhub_user>/<dockerhub_repo> --build-arg arg=value .
+# or using default args:
+# $ docker build -t <dockerhub_user>/<dockerhub_repo> .
 
 # it is still python2 code...
-ARG tag=1.10.0
+ARG tag=1.10.0-py3
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0
 FROM tensorflow/tensorflow:${tag}
@@ -12,14 +17,14 @@ FROM tensorflow/tensorflow:${tag}
 LABEL maintainer='V.Kozlov (KIT)'
 # Dogs breed detector as example for DEEPaaS API
 
-# it is still python2 code...
-ARG pyVer=python
+# default is python3 now
+ARG pyVer=python3
 
 # What user branch to clone (!)
-ARG branch=master
+ARG branch=api_v2
 
 # If to install JupyterLab
-ARG jlab=false
+ARG jlab=true
 
 # Install ubuntu updates and python related stuff
 # link python3 to python, pip3 to pip, if needed
@@ -60,6 +65,8 @@ RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/*
+
+ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)

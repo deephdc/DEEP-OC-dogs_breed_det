@@ -9,8 +9,8 @@ pipeline {
 
     environment {
         dockerhub_repo = "deephdc/deep-oc-dogs_breed_det"
-        base_cpu_tag = "1.10.0"
-        base_gpu_tag = "1.10.0-gpu"
+        base_cpu_tag = "1.10.0-py3"
+        base_gpu_tag = "1.10.0-gpu-py3"
     }
 
     stages {
@@ -40,40 +40,40 @@ pipeline {
                         id = "${env.dockerhub_repo}"
 
                         if (env.BRANCH_NAME == 'master') {
-                           // CPU + python2 (aka default now)
+                           // CPU + python3 (aka default now)
                            id_cpu = DockerBuild(id,
                                             tag: ['latest', 'cpu'], 
                                             build_args: ["tag=${env.base_cpu_tag}",
-                                                         "pyVer=python",
+                                                         "pyVer=python3",
                                                          "branch=master"])
 
                            // Check that default CMD is correct by starting the image
                            sh "bash ../check_oc_artifact/check_artifact.sh ${env.dockerhub_repo}"
 
-                           // GPU + python2
+                           // GPU + python3
                            id_gpu = DockerBuild(id,
                                             tag: ['gpu'], 
                                             build_args: ["tag=${env.base_gpu_tag}",
-                                                         "pyVer=python",
+                                                         "pyVer=python3",
                                                          "branch=master"])
                         }
 
                         if (env.BRANCH_NAME == 'test') {
-                           // CPU + python2 (aka default now)
+                           // CPU + python3 (aka default now)
                            id_cpu = DockerBuild(id,
                                             tag: ['test', 'cpu-test'], 
                                             build_args: ["tag=${env.base_cpu_tag}",
-                                                         "pyVer=python",
+                                                         "pyVer=python3",
                                                          "branch=test"])
 
                            // Check that default CMD is correct by starting the image
                            sh "bash ../check_oc_artifact/check_artifact.sh ${env.dockerhub_repo}:test"
 
-                           // GPU + python2
+                           // GPU + python3
                            id_gpu = DockerBuild(id,
                                             tag: ['gpu-test'], 
                                             build_args: ["tag=${env.base_gpu_tag}",
-                                                         "pyVer=python",
+                                                         "pyVer=python3",
                                                          "branch=test"])
                         }
 
