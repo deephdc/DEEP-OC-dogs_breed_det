@@ -8,14 +8,17 @@
 # or using default args:
 # $ docker build -t <dockerhub_user>/<dockerhub_repo> .
 
-# it is still python2 code...
-ARG tag=1.10.0-py3
+# DEEPaaS API V2 requires python3.6
+# set this tag for our custom built TF image
+ARG tag=1.10.0-py36
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0
-FROM tensorflow/tensorflow:${tag}
+# DEEPaaS API V2 requires python3.6,
+# use our custom built Tensorflow images
+FROM deephdc/tensorflow:${tag}
 
 LABEL maintainer='V.Kozlov (KIT)'
-# Dogs breed detector as example for DEEPaaS API
+# Dogs breed detector based on deep learning. Uses DEEPaaS API
 
 # default is python3 now
 ARG pyVer=python3

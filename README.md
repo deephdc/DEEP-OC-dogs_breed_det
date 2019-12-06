@@ -37,7 +37,7 @@ Building the container:
 1. Get the `DEEP-OC-dogs_breed_det` repository:
 
     ```bash
-    $ git clone https://github.com/indigo-dc/DEEP-OC-dogs_breed_det
+    $ git clone https://github.com/deephdc/DEEP-OC-dogs_breed_det
     ```
 
 2. Build the container:
