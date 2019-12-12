@@ -1,5 +1,5 @@
 # Dockerfile has three Arguments: tag, pyVer, branch
-# tag - tag for Tensorflow Image (default: 1.10.0)
+# tag - tag for Tensorflow Image (default: 1.10.0-py3)
 # pyVer - python versions as 'python' or 'python3' (default: python3)
 # branch - user repository branch to clone (default: master, other option: test)
 #
@@ -8,14 +8,14 @@
 # or using default args:
 # $ docker build -t <dockerhub_user>/<dockerhub_repo> .
 
-# it is still python2 code...
+# default is python3 now
 ARG tag=1.10.0-py3
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0
 FROM tensorflow/tensorflow:${tag}
 
 LABEL maintainer='V.Kozlov (KIT)'
-# Dogs breed detector as example for DEEPaaS API
+# Dogs breed detector based on deep learning. Uses DEEPaaS API
 
 # default is python3 now
 ARG pyVer=python3
