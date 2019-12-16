@@ -24,7 +24,7 @@ LABEL maintainer='V.Kozlov (KIT)'
 ARG pyVer=python3
 
 # What user branch to clone (!)
-ARG branch=api_v2
+ARG branch=test
 
 # If to install JupyterLab
 ARG jlab=true
@@ -74,7 +74,7 @@ ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
-    'deepaas==0.5.1' \
+    #'deepaas>=1.0.0' \
     flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
@@ -82,8 +82,14 @@ RUN pip install --no-cache-dir \
 # Disable FLAAT authentication by default
 ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
 
-# Install DEEP debug_log scripts:
-RUN git clone https://github.com/deephdc/deep-debug_log /srv/.debug_log
+# Temporarily install DEEPaaS from github
+RUN git clone https://github.com/indigo-dc/deepaas && \
+    cd deepaas && \
+    pip install --no-cache-dir -e . && \
+    rm -rf /root/.cache/pip/* && \
+    rm -rf /tmp/* && \
+    cd ..
+
 
 # Install JupyterLab
 ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
