@@ -101,7 +101,7 @@ RUN if [ "$jlab" = true ]; then \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app:
-RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
+RUN git clone -b $branch https://github.com/deep-oc-test/dogs_breed_det && \
     cd  dogs_breed_det && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
