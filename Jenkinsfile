@@ -9,7 +9,7 @@ pipeline {
 
     environment {
         dockerhub_repo = "deephdc/deep-oc-dogs_breed_det"
-        # [!] custom built TF images are used: deephdc/tensorflow [!]
+        // [!] custom built TF images are used: deephdc/tensorflow [!]
         base_cpu_tag = "1.10.0-py36"
         base_gpu_tag = "1.10.0-gpu-py36"
     }
