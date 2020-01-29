@@ -10,7 +10,7 @@
 
 # DEEPaaS API V2 requires python3.6
 # set this tag for our custom built TF image
-ARG tag=1.10.0-py36
+ARG tag=1.12.0-py3
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0
 # DEEPaaS API V2 requires python3.6,
@@ -75,22 +75,13 @@ ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
-    #'deepaas>=1.0.0' \
+    'deepaas>=1.0.0' \
     flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
 # Disable FLAAT authentication by default
 ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
-
-# Temporarily install DEEPaaS from github
-RUN git clone https://github.com/indigo-dc/deepaas && \
-    cd deepaas && \
-    pip install --no-cache-dir -e . && \
-    rm -rf /root/.cache/pip/* && \
-    rm -rf /tmp/* && \
-    cd ..
-
 
 # Install JupyterLab
 ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
@@ -108,7 +99,6 @@ RUN git clone -b $branch https://github.com/deep-oc-test/dogs_breed_det && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/* && \
     cd ..
-
 
 # Open DEEPaaS port
 EXPOSE 5000
