@@ -95,7 +95,7 @@ RUN if [ "$jlab" = true ]; then \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app:
-RUN git clone -b $branch https://github.com/deep-oc-test/dogs_breed_det && \
+RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
     cd  dogs_breed_det && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
@@ -108,5 +108,5 @@ EXPOSE 5000
 # Open Monitoring  and Jupyter ports
 EXPOSE 6006 8888
 
-# Account for OpenWisk functionality (deepaas 0.5.1)
+# Account for OpenWisk functionality (deepaas >0.5.1)
 CMD ["deepaas-run", "--openwhisk-detect", "--listen-ip", "0.0.0.0", "--listen-port", "5000"]
