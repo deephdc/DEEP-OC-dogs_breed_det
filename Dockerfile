@@ -8,11 +8,16 @@
 # or using default args:
 # $ docker build -t <dockerhub_user>/<dockerhub_repo> .
 
-# default is python3 now
-ARG tag=1.10.0-py3
+
+# DEEPaaS API V2 requires python3.6
+# set this tag for our custom built TF image
+ARG tag=1.12.0-py3
+
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0
-FROM tensorflow/tensorflow:${tag}
+# DEEPaaS API V2 requires python3.6,
+# use our custom built Tensorflow images
+FROM deephdc/tensorflow:${tag}
 
 LABEL maintainer='V.Kozlov (KIT)'
 # Dogs breed detector based on deep learning. Uses DEEPaaS API
@@ -36,6 +41,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
          wget \
          $pyVer-setuptools \
          $pyVer-pip \
+         $pyVer-dev \
          $pyVer-wheel && \ 
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -71,16 +77,13 @@ ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
-    'deepaas==0.5.1' \
+    'deepaas>=1.0.0' \
     flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
 
 # Disable FLAAT authentication by default
 ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
-
-# Install DEEP debug_log scripts:
-RUN git clone https://github.com/deephdc/deep-debug_log /srv/.debug_log
 
 # Install JupyterLab
 ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
@@ -92,13 +95,12 @@ RUN if [ "$jlab" = true ]; then \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app:
-RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
+RUN git clone -b $branch https://github.com/deep-oc-test/dogs_breed_det && \
     cd  dogs_breed_det && \
     pip install --no-cache-dir -e . && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/* && \
     cd ..
-
 
 # Open DEEPaaS port
 EXPOSE 5000
