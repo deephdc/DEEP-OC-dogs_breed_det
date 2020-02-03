@@ -52,8 +52,8 @@
     },
     "tosca": [
         {
-            "title": "Mesos (CPU)",
-            "url": "https://raw.githubusercontent.com/indigo-dc/tosca-templates/master/deep-oc/deep-oc-mesos-webdav.yml",
+            "title": "Marathon (CPU)",
+            "url": "https://raw.githubusercontent.com/indigo-dc/tosca-templates/master/deep-oc/deep-oc-marathon-webdav.yml",
             "inputs": [
                 "rclone_conf",
                 "rclone_url",
