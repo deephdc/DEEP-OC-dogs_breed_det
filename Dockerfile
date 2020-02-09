@@ -29,7 +29,7 @@ ARG pyVer=python3
 ARG branch=master
 
 # If to install JupyterLab
-ARG jlab=false
+ARG jlab=true
 
 # Install ubuntu updates and python related stuff
 # link python3 to python, pip3 to pip, if needed
@@ -74,6 +74,12 @@ RUN wget https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 
 ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 
+# INSTALL oneclient for ONEDATA
+RUN curl -sS  http://get.onedata.org/oneclient-1902.sh | bash && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/* 
+
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
@@ -101,6 +107,11 @@ RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/* && \
     cd ..
+
+# EXPERIMENTAL: install startup script
+RUN git clone https://github.com/deephdc/deep-startup /srv/.startup && \
+    ln -s /srv/.startup/deep-startup.sh deep-startup.sh && \
+    chmod +x deep-startup.sh
 
 # Open DEEPaaS port
 EXPOSE 5000
