@@ -11,8 +11,7 @@
 
 # DEEPaaS API V2 requires python3.6
 # set this tag for our custom built TF image
-ARG tag=1.12.0-py3
-
+ARG tag=1.12.0-py36
 
 # Base image, e.g. tensorflow/tensorflow:1.10.0
 # DEEPaaS API V2 requires python3.6,
@@ -77,6 +76,7 @@ ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 # INSTALL oneclient for ONEDATA
 RUN curl -sS  http://get.onedata.org/oneclient-1902.sh | bash && \
     apt-get clean && \
+    mkdir -p /mnt/onedata && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* 
 
