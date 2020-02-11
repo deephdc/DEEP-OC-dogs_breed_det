@@ -3,7 +3,7 @@ DEEP-OC-dogs_breed_det
 
 ![DEEP-Hybrid-DataCloud logo](https://docs.deep-hybrid-datacloud.eu/en/latest/_static/logo.png)
 
-[![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code%2FDEEP-OC-org%2FDEEP-OC-dogs_breed_det%2Fmaster)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master/)
+[![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code%2FDEEP-OC-org%2FDEEP-OC-dogs_breed_det%2Ftest)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/test/)
 
 
 This is a container that will simply run the DEEP as a Service API component [DEEPaaS API V2](https://github.com/indigo-dc/DEEPaaS),

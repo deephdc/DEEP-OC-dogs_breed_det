@@ -83,7 +83,7 @@ RUN curl -sS  http://get.onedata.org/oneclient-1902.sh | bash && \
 # Install DEEPaaS from PyPi
 # Install FLAAT (FLAsk support for handling Access Tokens)
 RUN pip install --no-cache-dir \
-    'deepaas>=1.0.0' \
+    'deepaas>=1.0.1' \
     flaat && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/*
@@ -91,13 +91,18 @@ RUN pip install --no-cache-dir \
 # Disable FLAAT authentication by default
 ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
 
+# EXPERIMENTAL: install deep-start script
+# N.B.: This repository also contains run_jupyter.sh
+RUN git clone https://github.com/deephdc/deep-start /srv/.deep-start && \
+    ln -s /srv/.deep-start/deep-start.sh deep-start && \
+    chmod +x deep-start
+
 # Install JupyterLab
-ENV JUPYTER_CONFIG_DIR /srv/.jupyter/
+ENV JUPYTER_CONFIG_DIR /srv/.deep-start/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
 RUN if [ "$jlab" = true ]; then \
        pip install --no-cache-dir jupyterlab ; \
-       git clone https://github.com/deephdc/deep-jupyter /srv/.jupyter ; \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app:
@@ -107,11 +112,6 @@ RUN git clone -b $branch https://github.com/deephdc/dogs_breed_det && \
     rm -rf /root/.cache/pip/* && \
     rm -rf /tmp/* && \
     cd ..
-
-# EXPERIMENTAL: install startup script
-RUN git clone https://github.com/deephdc/deep-startup /srv/.startup && \
-    ln -s /srv/.startup/deep-startup.sh deep-startup.sh && \
-    chmod +x deep-startup.sh
 
 # Open DEEPaaS port
 EXPOSE 5000
