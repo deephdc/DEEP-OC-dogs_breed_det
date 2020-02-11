@@ -94,8 +94,8 @@ ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
 # EXPERIMENTAL: install deep-start script
 # N.B.: This repository also contains run_jupyter.sh
 RUN git clone https://github.com/deephdc/deep-start /srv/.deep-start && \
-    ln -s /srv/.deep-start/deep-start.sh deep-start && \
-    chmod +x deep-start
+    ln -s /srv/.deep-start/deep-start.sh /usr/local/bin/deep-start && \
+    ln -s /srv/.deep-start/run_jupyter.sh /usr/local/bin/run_jupyter
 
 # Install JupyterLab
 ENV JUPYTER_CONFIG_DIR /srv/.deep-start/
