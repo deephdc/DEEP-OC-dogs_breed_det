@@ -28,7 +28,7 @@ ARG pyVer=python3
 ARG branch=master
 
 # If to install JupyterLab
-ARG jlab=true
+ARG jlab=false
 
 # Install ubuntu updates and python related stuff
 # link python3 to python, pip3 to pip, if needed
@@ -93,9 +93,12 @@ ENV DISABLE_AUTHENTICATION_AND_ASSUME_AUTHENTICATED_USER yes
 
 # EXPERIMENTAL: install deep-start script
 # N.B.: This repository also contains run_jupyter.sh
+# For compatibility, create symlink /srv/.jupyter/run_jupyter.sh
 RUN git clone https://github.com/deephdc/deep-start /srv/.deep-start && \
     ln -s /srv/.deep-start/deep-start.sh /usr/local/bin/deep-start && \
-    ln -s /srv/.deep-start/run_jupyter.sh /usr/local/bin/run_jupyter
+    ln -s /srv/.deep-start/run_jupyter.sh /usr/local/bin/run_jupyter && \
+    mkdir -p /srv/.jupyter && \
+    ln -s /srv/.deep-start/run_jupyter.sh /srv/.jupyter/run_jupyter.sh
 
 # Install JupyterLab
 ENV JUPYTER_CONFIG_DIR /srv/.deep-start/
