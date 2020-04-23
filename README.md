@@ -6,7 +6,7 @@ DEEP-OC-dogs_breed_det
 [![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code%2FDEEP-OC-org%2FDEEP-OC-dogs_breed_det%2Fmaster)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/DEEP-OC-dogs_breed_det/job/master/)
 
 
-This is a container that will run the DEEP as a Service API component [DEEPaaS API V2](https://github.com/indigo-dc/DEEPaaS),
+This is a container that will simply run the DEEP as a Service API component [DEEPaaS API V2](https://github.com/indigo-dc/DEEPaaS),
 
 with the application to identify Dog's breed, "Dogs breed detector" (src: [deephdc/dogs_breed_det](https://github.com/deephdc/dogs_breed_det)).
 
