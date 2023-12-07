@@ -30,7 +30,7 @@
          ""
 	],
     "keywords": [
-        "tensorflow",
+        "tensorflow-v1",
         "image classification",
         "cnn",
         "trainable",
